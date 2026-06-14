@@ -21,12 +21,17 @@ const router = createRouter({
                 {
                     path: '/finance/reports',
                     name: 'reports',
-                    component: () => import('@/views/finance/Reports.vue')
+                    component: () => import('@/views/finance/reports/Reports.vue')
                 },
                 {
                     path: '/finance/plans',
                     name: 'plans',
-                    component: () => import('@/views/finance/Plans.vue')
+                    component: () => import('@/views/finance/plans/Plans.vue')
+                },
+                {
+                    path: '/lifestyle/workout',
+                    name: 'workout',
+                    component: () => import('@/views/lifestyle/workout/Workout.vue')
                 },
                 {
                     path: '/uikit/formlayout',

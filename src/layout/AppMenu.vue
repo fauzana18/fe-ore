@@ -35,6 +35,17 @@ const model = ref([
         ]
     },
     {
+        label: 'Lifestyle',
+        path: '/lifestyle',
+        items: [
+            {
+                label: 'Catatan Olahraga',
+                icon: 'pi pi-fw pi-bolt',
+                to: '/lifestyle/workout'
+            },
+        ]
+    },
+    {
         label: 'UI Components',
         path: '/uikit',
         items: [

@@ -60,7 +60,7 @@
                         <InputIcon class="pi pi-search" />
                         <InputText size="large" v-model="filters.name" placeholder="Pencarian..." @change="onFilter" class="w-full md:w-65" />
                     </IconField>
-                    <Select v-if="selectedMode && selectedMode.code == 2" size="large" v-model="showrows_selected" :options="showrows" optionLabel="label" placeholder="Show Data Amount" class="w-full mt-10 mb-3 md:!hidden" @change="onSelectRows"/>
+                    <Select v-if="selectedMode && selectedMode.code == 2" size="large" v-model="showrows_selected" :options="showrows" optionLabel="label" placeholder="Show Data Amount" class="w-full mt-10 mb-3 md:!hidden text-center" @change="onSelectRows"/>
                 </div>
             </div>
             
