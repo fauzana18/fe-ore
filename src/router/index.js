@@ -16,7 +16,7 @@ const router = createRouter({
                 {
                     path: '/finance/transactions',
                     name: 'transactions',
-                    component: () => import('@/views/finance/Transactions.vue')
+                    component: () => import('@/views/finance/transactions/Transactions.vue')
                 },
                 {
                     path: '/finance/reports',

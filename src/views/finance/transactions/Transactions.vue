@@ -3,8 +3,6 @@
 
 <script src="./index.js"></script>
 
-<style scoped lang="scss" src="./style.scss"></style>
-
 <template>
     <div class="flex flex-col">
         <div class="card">
@@ -59,16 +57,16 @@
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} transactions" responsiveLayout="stack" :totalRecords="totalRecords" @page="onPage($event)" :key="rerender">
                 <template #header>
                     <div class="flex flex-col md:flex-row md:justify-between md:items-center">
-                        <div class="left-side">
+                        <div class="flex items-center">
                             <Button size="large" label="Refresh" icon="pi pi-refresh" severity="info" class="ml-2" @click="reload"/>
                         </div>
-                        <div class="filter">
+                        <div class="flex">
                             <Select size="large" v-model="filters.c_type" :options="category.type" optionLabel="name" placeholder="Tipe" class="mr-2 filter-width" @change="onFilter"/>
                             <Select size="large" v-if="filters.c_type" v-model="filters.category_id" :options="categoryOptionsFilter" optionLabel="name" placeholder="Kategori" class="mr-2 mt-2 md:mt-0 filter-width" @change="onFilter"/>
                             <Select size="large" v-model="filters.created" :options="range" optionLabel="label" placeholder="Tanggal" class="mr-2 mt-2 md:mt-0 filter-width" @change="onFilter"/>
                             <IconField>
                                 <InputIcon class="pi pi-search" />
-                                <InputText size="large" v-model="filters.name" placeholder="Pencarian..." class="filter-width" @change="onFilter" />
+                                <InputText size="large" v-model="filters.name" placeholder="Pencarian..." @change="onFilter" />
                             </IconField>
                         </div>
                     </div>
@@ -121,16 +119,16 @@
                 :expandableRowGroups="true" v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand">
                 <template #header>
                     <div class="flex flex-col md:flex-row md:justify-between md:items-center">
-                        <div class="left-side">
+                        <div class="flex items-center">
                             <Button size="large" label="Refresh" icon="pi pi-refresh" severity="info" class="ml-2" @click="reload"/>
                         </div>
-                        <div class="filter">
+                        <div class="flex">
                             <Select size="large" v-model="filters.c_type" :options="category.type" optionLabel="name" placeholder="Tipe" class="mr-2 filter-width" @change="onFilter"/>
                             <Select size="large" v-if="filters.c_type" v-model="filters.category_id" :options="categoryOptionsFilter" optionLabel="name" placeholder="Kategori" class="mr-2 mt-2 md:mt-0 filter-width" @change="onFilter"/>
                             <Select size="large" v-model="filters.created" :options="range" optionLabel="label" placeholder="Tanggal" class="mr-2 mt-2 md:mt-0 filter-width" @change="onFilter"/>
                             <IconField>
                                 <InputIcon class="pi pi-search" />
-                                <InputText size="large" v-model="filters.name" placeholder="Pencarian..." class="filter-width" @change="onFilter" />
+                                <InputText size="large" v-model="filters.name" placeholder="Pencarian..." @change="onFilter" />
                             </IconField>
                         </div>
                     </div>
@@ -166,7 +164,7 @@
                     <span>{{dateHandler(slotProps.data.created)}}</span>
                 </template>
                 <template #groupfooter="slotProps">
-                    <div class="div-footer">
+                    <div class="flex flex-row justify-end" style="width: 80%;">
                         <div class="my-1 mr-5 flex flex-col">
                             <span>Pengeluaran</span>
                             <span>Pemasukan</span>
@@ -275,7 +273,7 @@
                         <template v-slot:content>
                             <div style="display: flex; align-items: center; justify-content: space-between;">
                                 <p v-if="!editCategoryField[i]" class="line-height-3 m-0">{{items.name}}</p>
-                                <InputText class="input-cat" v-else v-model="cat.name" required="true" :class="{'p-invalid': submitted && !cat.name}" autocomplete="off" />
+                                <InputText v-else style="width: 70%;" v-model="cat.name" required="true" :class="{'p-invalid': submitted && !cat.name}" autocomplete="off" />
                                 <div>
                                     <Button size="large" :severity="editCategoryField[i] ? 'secondary' : 'success'" :icon="editCategoryField[i] ? 'pi pi-times' : 'pi pi-pencil'" class="mr-2" rounded @click="toggleEditCategory(i)" />
                                     <ConfirmPopup style="white-space: pre-line"></ConfirmPopup>
