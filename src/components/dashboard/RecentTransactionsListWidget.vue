@@ -1,0 +1,77 @@
+<script setup>
+import { useFinance } from '@/composables/finance';
+import FinanceService from '@/service/FinanceService';
+import { profileStore } from '@/store/finance';
+import { onMounted, ref, watch } from 'vue';
+
+const { formatCurrency, dateHandler } = useFinance();
+const financeService = new FinanceService()
+const profiles = profileStore();
+const transactions = ref(null);
+const loading = ref(false);
+
+const getList = async () => {
+    loading.value = true
+    const params = {
+        limit: 5,
+        offset: 0,
+        order: ['created', 'DESC'],
+        profile_id: profiles.list[profiles.selected] ? profiles.list[profiles.selected].id : 1
+    }
+
+    const list = await financeService.getTransactionList(params)
+    transactions.value = list.data.result
+    loading.value = false
+}
+
+watch(profiles, async () => {
+  await this.getList();
+})
+
+onMounted(async () => {
+    await getList();
+});
+</script>
+
+<template>
+    <div class="card">
+        <div class="flex-center-between">
+            <div class="font-semibold text-xl">Transaksi Terbaru</div>
+            <Button icon="pi pi-search" type="button" class="p-button-text" @click="$router.push({ name: 'finance' })"></Button>
+        </div>
+        <DataView :value="transactions" layout="list">
+            <template #list="slotProps">
+                <div class="flex flex-col">
+                    <div v-for="(item, index) in slotProps.items" :key="index">
+                        <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4" :class="{ 'border-t border-surface': index !== 0 }">
+                            <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
+                                <div class="flex flex-row md:flex-col justify-between items-start gap-2">
+                                    <div>
+                                        <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.category.name }}</span>
+                                        <div class="text-lg font-medium mt-2">{{ item.name }}</div>
+                                    </div>
+                                    <div class="bg-surface-100 p-1" style="border-radius: 30px">
+                                        <div
+                                            class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2"
+                                            style="
+                                                border-radius: 30px;
+                                                box-shadow:
+                                                    0px 1px 2px 0px rgba(0, 0, 0, 0.04),
+                                                    0px 1px 2px 0px rgba(0, 0, 0, 0.06);
+                                            "
+                                        >
+                                            <span class="text-surface-900 font-medium text-sm">{{dateHandler(item.created, true)}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-6 ">
+                                    <span class="text-2xl font-semibold" :class="item.category.type == 'Pengeluaran' ? 'text-red' : 'text-green'">{{formatCurrency(item.amount)}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </DataView>
+    </div>
+</template>

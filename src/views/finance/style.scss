@@ -1,0 +1,54 @@
+@use '../../assets/demo/badges.scss';
+
+.filter {
+	display: flex;
+}
+
+.left-side {
+	display: flex;
+	align-items: center;
+}
+
+.div-footer {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	width: 80%;
+}
+
+.input-cat {
+	width: 70%
+}
+
+@media screen and (max-width: 575px) {
+	.filter {
+		display: block;
+		margin-top: 20px;
+	}
+
+	.filter-width {
+		width: 100%;
+	}
+
+	.left-side {
+		justify-content: space-between;
+	}
+
+	.div-footer {
+		align-items: center;
+		width: 100%;
+	}
+
+	.table-footer {
+		width: 100%;
+
+		td {
+			width: 50%;
+    		text-align: center;
+		}
+	}
+
+	.input-cat {
+		width: 65%
+	}
+}
