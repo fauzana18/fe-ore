@@ -10,25 +10,21 @@
 
             <Toast/>
 
-            <Toolbar class="mb-4 mt-8" style="padding: 1rem 1rem 1rem 1.5rem">
-                <template v-slot:start>
-                    <div class="my-2">
-                        <Button label="Tambah" size="large" severity="success" icon="pi pi-plus" class="mr-2" @click="openNew" />
-                        <Button label="Hapus" size="large" severity="danger" icon="pi pi-trash" @click="confirmDeleteSelected" :disabled="!selectedTransactions || !selectedTransactions.length" />
-                    </div>
+            <Toolbar class="mb-3 mt-8 !p-4" :pt="{start: {class: '!w-full md:!w-auto !justify-between'}, end: {class: '!w-full md:!w-auto !justify-between'}}">
+                <template #start>
+                    <Button label="Tambah" size="large" severity="success" icon="pi pi-plus" class="w-full md:w-auto mr-2" @click="openNew" />
+                    <Button label="Hapus" size="large" severity="danger" icon="pi pi-trash" class="w-full md:w-auto" @click="confirmDeleteSelected" :disabled="!selectedTransactions || !selectedTransactions.length" />
                 </template>
 
-                <template v-slot:end>
-                    <Button label="Import" size="large" icon="pi pi-plus" class="mr-2 inline-block" @click="openDialog('Import')" />
-                    <Button label="Export" size="large" severity="help" icon="pi pi-upload" class="mr-2" @click="openDialog('Export')"  />
+                <template #end>
+                    <Button label="Import" size="large" icon="pi pi-plus" class="w-full md:w-auto mr-2 inline-block" @click="openDialog('Import')" />
+                    <Button label="Export" size="large" severity="help" icon="pi pi-upload" class="w-full md:w-auto md:mr-2" @click="openDialog('Export')"  />
                 </template>
             </Toolbar>
 
-            <Toolbar class="mb-4" style="border: 0;">
-                <template v-slot:start>
-                    <div class="my-2">
-                        <Button label="Atur Kategori" size="large" severity="info" class="mr-2" @click="manageCategory" />
-                    </div>
+            <Toolbar class="mb-3" style="border: 0;" :pt="{start: {class: '!w-full md:!w-auto !justify-between'}, end: {class: '!w-full md:!w-auto !justify-between'}}">
+                <template #start>
+                    <Button label="Atur Kategori" size="large" severity="info" class="mr-2" @click="manageCategory" />
                     <SelectButton style="height: 3rem;" v-model="selectedMode" :options="modes" optionLabel="name" @change="changeView">
                         <template #option="slotProps">
                             <div>
@@ -38,7 +34,7 @@
                     </SelectButton>
                 </template>
 
-                <template v-slot:end>
+                <template #end>
                     <div class="my-2 mr-5 flex flex-col">
                         <span>Total Pengeluaran</span>
                         <span>Total Pemasukan</span>
@@ -51,147 +47,180 @@
                     </div>
                 </template>
             </Toolbar>
+
+            <div class="flex flex-col mb-3 md:flex-row md:justify-between md:items-center">
+                <div class="flex items-center">
+                    <Button size="large" label="Refresh" icon="pi pi-refresh" severity="info" class="w-full mb-3 md:mb-0 md:ml-2" @click="reload"/>
+                </div>
+                <div class="flex flex-col md:flex-row">
+                    <Select size="large" v-model="filters.c_type" :options="category.type" optionLabel="name" placeholder="Tipe" class="w-full mb-3 md:mr-2 md:mb-0" @change="onFilter"/>
+                    <Select size="large" v-if="filters.c_type" v-model="filters.category_id" :options="categoryOptionsFilter" optionLabel="name" placeholder="Kategori" class="w-full mb-3 md:mr-2 md:mb-0" @change="onFilter"/>
+                    <Select size="large" v-model="filters.created" :options="range" optionLabel="label" placeholder="Tanggal" class="w-full mb-3 md:mr-2 md:mb-0" @change="onFilter"/>
+                    <IconField class="mb-3 md:mb-0">
+                        <InputIcon class="pi pi-search" />
+                        <InputText size="large" v-model="filters.name" placeholder="Pencarian..." @change="onFilter" class="w-full md:w-65" />
+                    </IconField>
+                    <Select v-if="selectedMode && selectedMode.code == 2" size="large" v-model="showrows_selected" :options="showrows" optionLabel="label" placeholder="Show Data Amount" class="w-full mt-10 mb-3 md:!hidden" @change="onSelectRows"/>
+                </div>
+            </div>
             
-            <DataTable v-if="selectedMode && selectedMode.code == 2" ref="dt" :value="transactions" :lazy="true" v-model:selection="selectedTransactions" dataKey="id" :paginator="true" :rows="10" :loading="loading" @sort="onSort($event)"
-                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]" :pageLinkSize="3"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} transactions" responsiveLayout="stack" :totalRecords="totalRecords" @page="onPage($event)" :key="rerender">
-                <template #header>
-                    <div class="flex flex-col md:flex-row md:justify-between md:items-center">
-                        <div class="flex items-center">
-                            <Button size="large" label="Refresh" icon="pi pi-refresh" severity="info" class="ml-2" @click="reload"/>
+            <div class="md:hidden">
+                <DataView :value="transactions" layout="list">
+                    <template #list="slotProps">
+                        <div class="flex flex-col">
+                            <div v-for="(item, index) in slotProps.items" :key="index">
+                                <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4" :class="{ 'border-t border-surface': index !== 0 }">
+                                    <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
+                                        <div class="flex flex-row md:flex-col justify-between items-start gap-2">
+                                            <div>
+                                                <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.category.name }}</span>
+                                                <div class="text-lg font-medium mt-2">{{ item.name }}</div>
+                                            </div>
+                                            <div class="bg-surface-100 p-1" style="border-radius: 30px">
+                                                <div
+                                                    class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2"
+                                                    style="
+                                                        border-radius: 30px;
+                                                        box-shadow:
+                                                            0px 1px 2px 0px rgba(0, 0, 0, 0.04),
+                                                            0px 1px 2px 0px rgba(0, 0, 0, 0.06);
+                                                    "
+                                                >
+                                                    <span class="text-surface-900 font-medium text-sm">{{dateHandler2(item.created)}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-row justify-between gap-6 ">
+                                            <span class="text-2xl font-semibold" :class="item.category.type == 'Pengeluaran' ? 'text-red' : 'text-green'">{{formatCurrency(item.amount)}}</span>
+                                            <div>
+                                                <Button icon="pi pi-pencil" severity="success" class="mr-2" rounded @click="editTransaction(item)" />
+                                                <Button icon="pi pi-trash" severity="warn" rounded @click="confirmDeleteTransaction(item)" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex">
-                            <Select size="large" v-model="filters.c_type" :options="category.type" optionLabel="name" placeholder="Tipe" class="mr-2 filter-width" @change="onFilter"/>
-                            <Select size="large" v-if="filters.c_type" v-model="filters.category_id" :options="categoryOptionsFilter" optionLabel="name" placeholder="Kategori" class="mr-2 mt-2 md:mt-0 filter-width" @change="onFilter"/>
-                            <Select size="large" v-model="filters.created" :options="range" optionLabel="label" placeholder="Tanggal" class="mr-2 mt-2 md:mt-0 filter-width" @change="onFilter"/>
-                            <IconField>
-                                <InputIcon class="pi pi-search" />
-                                <InputText size="large" v-model="filters.name" placeholder="Pencarian..." @change="onFilter" />
-                            </IconField>
-                        </div>
-                    </div>
-                </template>
-                <template #empty>
-                    Data kosong.
-                </template>
-                <template #loading>
-                    Memuat data. Mohon tunggu.
-                </template>
+                    </template>
+                </DataView>
+            </div>
 
-                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <Column field="created" header="Tanggal" :sortable="true" headerStyle="width:14%; min-width:10rem;">
-                    <template #body="slotProps">
-                        {{dateHandler(slotProps.data.created)}}
-                    </template>
-                </Column>
-                <Column field="name" header="Judul" :sortable="true" headerStyle="width:30%; min-width:10rem;">
-                    <template #body="slotProps">
-                        {{slotProps.data.name}}
-                    </template>
-                </Column>
-                <Column field="amount" header="Jumlah" :sortable="true" headerStyle="width:14%; min-width:10rem;">
-                    <template #body="slotProps">
-                        {{formatCurrency(slotProps.data.amount)}}
-                    </template>
-                </Column>
-                <Column field="category.type" header="Tipe" headerStyle="width:14%; min-width:8rem;">
-                    <template #body="slotProps">
-                        {{slotProps.data.category.type}}
-                    </template>
-                </Column>
-                <Column field="category_id" header="Kategori" :sortable="true" headerStyle="width:14%; min-width:10rem;">
-                    <template #body="slotProps">
-                        {{slotProps.data.category.name}}
-                    </template>
-                </Column>
-                <Column headerStyle="min-width:10rem;">
-                    <template #body="slotProps">
-                        <div>
-                            <Button size="large" icon="pi pi-pencil" severity="success" class="mr-2" rounded @click="editTransaction(slotProps.data)" />
-                            <Button size="large" icon="pi pi-trash" severity="warn" class="mt-2" rounded @click="confirmDeleteTransaction(slotProps.data)" />
-                        </div>
-                    </template>
-                </Column>
-            </DataTable>
+            <div v-if="selectedMode && selectedMode.code == 2" class="md:hidden">
+                <Paginator template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink" currentPageReportTemplate="{currentPage} of {totalPages}" @page="onPage($event)" :rows="rows" :totalRecords="totalRecords"></Paginator>
+            </div>
 
-            <DataTable v-else :value="transactions" rowGroupMode="subheader" groupRowsBy="created" dataKey="id" :key="'table2'+rerender"
-                sortMode="single" sortField="created" :sortOrder="-1" responsiveLayout="stack" :loading="loading"
-                :expandableRowGroups="true" v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand">
-                <template #header>
-                    <div class="flex flex-col md:flex-row md:justify-between md:items-center">
-                        <div class="flex items-center">
-                            <Button size="large" label="Refresh" icon="pi pi-refresh" severity="info" class="ml-2" @click="reload"/>
-                        </div>
-                        <div class="flex">
-                            <Select size="large" v-model="filters.c_type" :options="category.type" optionLabel="name" placeholder="Tipe" class="mr-2 filter-width" @change="onFilter"/>
-                            <Select size="large" v-if="filters.c_type" v-model="filters.category_id" :options="categoryOptionsFilter" optionLabel="name" placeholder="Kategori" class="mr-2 mt-2 md:mt-0 filter-width" @change="onFilter"/>
-                            <Select size="large" v-model="filters.created" :options="range" optionLabel="label" placeholder="Tanggal" class="mr-2 mt-2 md:mt-0 filter-width" @change="onFilter"/>
-                            <IconField>
-                                <InputIcon class="pi pi-search" />
-                                <InputText size="large" v-model="filters.name" placeholder="Pencarian..." @change="onFilter" />
-                            </IconField>
-                        </div>
-                    </div>
-                </template>
-                <template #empty>
-                    Data kosong.
-                </template>
-                <template #loading>
-                    Memuat data. Mohon tunggu.
-                </template>
-                <Column field="created" header="Representative"></Column>
-                <Column field="name" header="Judul"></Column>
-                <Column field="amount" header="Jumlah">
-                    <template #body="slotProps">
-                        {{formatCurrency(slotProps.data.amount)}}
+            <div v-if="selectedMode && selectedMode.code == 2" class="hidden md:block" >
+                <DataTable ref="dt" :value="transactions" :lazy="true" v-model:selection="selectedTransactions" dataKey="id" :paginator="true" :rows="rows" :loading="loading" @sort="onSort($event)"
+                            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]" :pageLinkSize="3"
+                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} transactions" :totalRecords="totalRecords" @page="onPage($event)" :key="rerender">
+                    <template #empty>
+                        Data kosong.
                     </template>
-                </Column>
-                <Column field="category.type" header="Tipe"></Column>
-                <Column field="category_id" header="Kategori">
-                    <template #body="slotProps">
-                        {{slotProps.data.category.name}}
+                    <template #loading>
+                        Memuat data. Mohon tunggu.
                     </template>
-                </Column>
-                <Column headerStyle="min-width:10rem;">
-                    <template #body="slotProps">
-                        <div>
-                            <Button size="large" icon="pi pi-pencil" severity="success" class="mr-2" rounded @click="editTransaction(slotProps.data)" />
-                            <Button size="large" icon="pi pi-trash" severity="warn" class="mt-2" rounded @click="confirmDeleteTransaction(slotProps.data)" />
+
+                    <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                    <Column field="created" header="Tanggal" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                        <template #body="slotProps">
+                            {{dateHandler(slotProps.data.created)}}
+                        </template>
+                    </Column>
+                    <Column field="name" header="Judul" :sortable="true" headerStyle="width:30%; min-width:10rem;">
+                        <template #body="slotProps">
+                            {{slotProps.data.name}}
+                        </template>
+                    </Column>
+                    <Column field="amount" header="Jumlah" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                        <template #body="slotProps">
+                            {{formatCurrency(slotProps.data.amount)}}
+                        </template>
+                    </Column>
+                    <Column field="category.type" header="Tipe" headerStyle="width:14%; min-width:8rem;">
+                        <template #body="slotProps">
+                            {{slotProps.data.category.type}}
+                        </template>
+                    </Column>
+                    <Column field="category_id" header="Kategori" :sortable="true" headerStyle="width:14%; min-width:10rem;">
+                        <template #body="slotProps">
+                            {{slotProps.data.category.name}}
+                        </template>
+                    </Column>
+                    <Column headerStyle="min-width:10rem;">
+                        <template #body="slotProps">
+                            <div>
+                                <Button size="large" icon="pi pi-pencil" severity="success" class="mr-2" rounded @click="editTransaction(slotProps.data)" />
+                                <Button size="large" icon="pi pi-trash" severity="warn" class="mt-2" rounded @click="confirmDeleteTransaction(slotProps.data)" />
+                            </div>
+                        </template>
+                    </Column>
+                </DataTable>
+            </div>
+
+            <div v-else class="hidden md:block">
+                <DataTable :value="transactions" rowGroupMode="subheader" groupRowsBy="created" dataKey="id" :key="'table2'+rerender"
+                    sortMode="single" sortField="created" :sortOrder="-1" :loading="loading"
+                    :expandableRowGroups="true" v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand">
+                    <template #empty>
+                        Data kosong.
+                    </template>
+                    <template #loading>
+                        Memuat data. Mohon tunggu.
+                    </template>
+                    <Column field="created" header="Representative"></Column>
+                    <Column field="name" header="Judul"></Column>
+                    <Column field="amount" header="Jumlah">
+                        <template #body="slotProps">
+                            {{formatCurrency(slotProps.data.amount)}}
+                        </template>
+                    </Column>
+                    <Column field="category.type" header="Tipe"></Column>
+                    <Column field="category_id" header="Kategori">
+                        <template #body="slotProps">
+                            {{slotProps.data.category.name}}
+                        </template>
+                    </Column>
+                    <Column headerStyle="min-width:10rem;">
+                        <template #body="slotProps">
+                            <div>
+                                <Button size="large" icon="pi pi-pencil" severity="success" class="mr-2" rounded @click="editTransaction(slotProps.data)" />
+                                <Button size="large" icon="pi pi-trash" severity="warn" class="mt-2" rounded @click="confirmDeleteTransaction(slotProps.data)" />
+                            </div>
+                        </template>
+                    </Column>
+                    <template #groupheader="slotProps">
+                        <span>{{dateHandler(slotProps.data.created)}}</span>
+                    </template>
+                    <template #groupfooter="slotProps">
+                        <div class="flex flex-row justify-end" style="width: 80%;">
+                            <div class="my-1 mr-5 flex flex-col">
+                                <span>Pengeluaran</span>
+                                <span>Pemasukan</span>
+                            </div>
+                            <div class="my-1 flex flex-col">
+                                <span>{{calculateAmount(slotProps.data.created, 'Pengeluaran')}}</span>
+                                <span style="color: green;">{{calculateAmount(slotProps.data.created, 'Pemasukan')}}</span>
+                            </div>
                         </div>
                     </template>
-                </Column>
-                <template #groupheader="slotProps">
-                    <span>{{dateHandler(slotProps.data.created)}}</span>
-                </template>
-                <template #groupfooter="slotProps">
-                    <div class="flex flex-row justify-end" style="width: 80%;">
-                        <div class="my-1 mr-5 flex flex-col">
-                            <span>Pengeluaran</span>
-                            <span>Pemasukan</span>
-                        </div>
-                        <div class="my-1 flex flex-col">
-                            <span>{{calculateAmount(slotProps.data.created, 'Pengeluaran')}}</span>
-                            <span style="color: green;">{{calculateAmount(slotProps.data.created, 'Pemasukan')}}</span>
-                        </div>
-                    </div>
-                </template>
-            </DataTable>
+                </DataTable>
+            </div>
 
             <Dialog :header="header2" v-model:visible="importDialog" :breakpoints="{'960px': '75vw'}" :style="{width: '30vw'}" :modal="true" :dismissableMask="true">
-                <Button v-if="header2 == 'Import'" style="width: 100%;" label="Download Template" size="large" severity="success" icon="pi pi-download" class="mt-2" @click="downloadTemplate" />
-                <FileUpload v-if="header2 == 'Import'" style="width: 100%;" mode="basic" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :disabled="submitting"
-                    :maxFileSize="1000000" label="Import" chooseLabel="Import" class="mt-2" :customUpload="true" @uploader="fileHandler" />
+                <Button v-if="header2 == 'Import'" label="Download Template" size="large" severity="success" icon="pi pi-download" class="mt-2 w-full" @click="downloadTemplate" />
+                <FileUpload v-if="header2 == 'Import'" mode="basic" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :disabled="submitting"
+                    :auto="true" :maxFileSize="1000000" label="Import" chooseLabel="Import" class="mt-2 w-full" customUpload @select="fileHandler" />
                 <div v-else>
-                    <Select size="large" style="width: 100%; text-align: center;" v-model="exportRange"  :options="range2" optionLabel="label" placeholder="Tanggal" class="mr-2 mt-2 md:mt-0"/>
+                    <Select size="large" style="text-align: center;" v-model="exportRange"  :options="range2" optionLabel="label" placeholder="Tanggal" class="w-full mr-2 mt-2 md:mt-0"/>
                     <div v-if="exportRange.code == 6" class="field mt-4" style="display: block;">
                         <label for="name">Dari Tanggal</label><br>
-                        <Calendar style="width: 100%;" :showIcon="true" :showButtonBar="true" v-model="dateStart" dateFormat="dd MM yy"></Calendar>
+                        <Calendar class="w-full" :showIcon="true" :showButtonBar="true" v-model="dateStart" dateFormat="dd MM yy"></Calendar>
                     </div>
                     <div v-if="exportRange.code == 6" class="field">
                         <label for="name">Sampai Tanggal</label><br>
-                        <Calendar style="width: 100%;" :showIcon="true" :showButtonBar="true" v-model="dateEnd" dateFormat="dd MM yy"></Calendar>
+                        <Calendar class="w-full" :showIcon="true" :showButtonBar="true" v-model="dateEnd" dateFormat="dd MM yy"></Calendar>
                     </div>
-                    <Button :loading="exporting" style="width: 100%;" label="Export" size="large" severity="help" icon="pi pi-upload" class="mt-2" @click="exportExcel" :disabled="exportRange.code == 6 && !dateStart && !dateEnd" />
+                    <Button :loading="exporting" label="Export" size="large" severity="help" icon="pi pi-upload" class="w-full mt-2" @click="exportExcel" :disabled="exportRange.code == 6 && !dateStart && !dateEnd" />
                 </div>
             </Dialog>
 
@@ -224,12 +253,12 @@
                 </div>
                 <div class="mb-4 flex flex-col">
                     <label for="inventoryStatus" class="mb-4">Judul</label>
-                    <InputText id="name" size="large" v-model="transaction.name" required="true" autofocus :class="{'p-invalid': submitted && !transaction.name}" autocomplete="off" />
+                    <InputText id="name" size="large" v-model="transaction.name" :required="true" autofocus :class="{'p-invalid': submitted && !transaction.name}" autocomplete="off" />
                     <small class="p-invalid" v-if="submitted && !transaction.name">Judul harus diisi.</small>
                 </div>
                 <div class="mb-4 flex flex-col">
                     <label for="price" class="mb-4">Jumlah</label>
-                    <InputNumber autocomplete="off" id="price" size="large" v-model="transaction.amount" mode="currency" currency="IDR" locale="id-ID" required="true" autofocus :class="{'p-invalid': submitted && !transaction.amount}" />
+                    <InputNumber autocomplete="off" id="price" size="large" v-model="transaction.amount" mode="currency" currency="IDR" locale="id-ID" :required="true" autofocus :class="{'p-invalid': submitted && !transaction.amount}" />
                     <small class="p-invalid" v-if="submitted && !transaction.amount">Jumlah harus diisi.</small>
                 </div>
                 <Message v-if="submitStatus" :severity="submitStatus" :closable="false">{{submitMessage}}</Message>
@@ -273,7 +302,7 @@
                         <template v-slot:content>
                             <div style="display: flex; align-items: center; justify-content: space-between;">
                                 <p v-if="!editCategoryField[i]" class="line-height-3 m-0">{{items.name}}</p>
-                                <InputText v-else style="width: 70%;" v-model="cat.name" required="true" :class="{'p-invalid': submitted && !cat.name}" autocomplete="off" />
+                                <InputText v-else style="width: 70%;" v-model="cat.name" :required="true" :class="{'p-invalid': submitted && !cat.name}" autocomplete="off" />
                                 <div>
                                     <Button size="large" :severity="editCategoryField[i] ? 'secondary' : 'success'" :icon="editCategoryField[i] ? 'pi pi-times' : 'pi pi-pencil'" class="mr-2" rounded @click="toggleEditCategory(i)" />
                                     <ConfirmPopup style="white-space: pre-line"></ConfirmPopup>
@@ -286,9 +315,9 @@
                     <Card >
                         <template v-slot:content>
                             <div>
-                                <Button v-if="!newCategoryField" style="width: 100%;" icon="pi pi-plus" label="Tambah Baru" size="large" severity="success" @click="toggleAddCategory()"/>
+                                <Button v-if="!newCategoryField" class="w-full" icon="pi pi-plus" label="Tambah Baru" size="large" severity="success" @click="toggleAddCategory()"/>
                                 <div v-else class="flex items-center justify-between">
-                                    <InputText class="input-cat" v-model="cat.name" required="true" :class="{'p-invalid': submitted && !cat.name}" autocomplete="off" />
+                                    <InputText class="input-cat" v-model="cat.name" :required="true" :class="{'p-invalid': submitted && !cat.name}" autocomplete="off" />
                                     <div>
                                         <Button icon="pi pi-times" size="large" severity="secondary" class="mr-2" rounded @click="toggleAddCategory()" />
                                         <Button icon="pi pi-check" size="large" severity="primary" :loading="submittingCategory" rounded @click="saveCategory()"/>

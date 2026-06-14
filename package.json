@@ -1,6 +1,6 @@
 {
-    "name": "sakai-vue",
-    "version": "5.0.0",
+    "name": "ore-no-app-fe",
+    "version": "1.0.0",
     "scripts": {
         "dev": "vite",
         "build": "vite build",

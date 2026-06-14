@@ -16,6 +16,13 @@ export default {
 			transaction: {},
 			loading: true,
 			totalRecords: 0,
+			rows: 10,
+			showrows: [
+				{ label: 'Showing 5 Rows', rows: 5 },
+				{ label: 'Showing 10 Rows', rows: 10 },
+				{ label: 'Showing 25 Rows', rows: 25 },
+			],
+			showrows_selected: { label: 'Showing 10 Rows', rows: 10 }, 
 			lazyParams: {},
 			profiles: profileStore(),
 			category: categoryStore(),
@@ -158,6 +165,11 @@ export default {
 			const dateNowString = dateNow.toLocaleDateString('id-ID', options)
 			const res = dateNowString == dateString ? `Hari ini, ${dateString.split(', ')[1]}` : dateString
 			return res
+		},
+		dateHandler2(date) {
+			const options = { year: '2-digit', month: '2-digit', day: '2-digit' }
+            const d = new Date(date)
+            return d.toLocaleDateString('id-ID', options)
 		},
 		scrollTop() {
 			let scrollToTop = window.setInterval(() => {
@@ -383,6 +395,19 @@ export default {
 			await this.getList()
 			this.scrollTop()
 		},
+		async onSelectRows(e) {
+			let cleansedQuery = this.cleansingQuery(this.filters)
+			this.lazyParams = {
+				offset: 0,
+				limit: e.value.rows,
+				order: ['created', 'DESC'],
+				profile_id: this.profiles.list[this.profiles.selected] ? this.profiles.list[this.profiles.selected].id : 1,
+				...cleansedQuery
+			}
+			this.rows = e.value.rows
+			await this.getList()
+			this.scrollTop()
+		},
 		async onSort(e) {
 			let cleansedQuery = this.cleansingQuery(this.filters)
 			this.lazyParams = {
@@ -530,7 +555,7 @@ export default {
                 reader.onerror = function() {
                 }
               
-                reader.readAsBinaryString(file)
+                reader.readAsArrayBuffer(file)
             })
         },
 		async importTransaction(body) {
@@ -541,6 +566,12 @@ export default {
 				const res = await this.FinanceService.importTransaction(body)
 
 				if(res.status == 200) {
+					body.map(item => {
+						const findCategory = this.category.list.find(cat => cat.id == item.category_id)
+						this.saldo.add(findCategory.type == 'Pemasukan' ? 'in' : 'out', item.amount)
+					})
+
+					this.importDialog = false
 					stat = 'success'
 					message = res.data.message
 					summary = 'Sukses'

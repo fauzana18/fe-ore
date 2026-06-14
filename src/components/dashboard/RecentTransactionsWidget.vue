@@ -37,7 +37,7 @@ onMounted(async () => {
     <div class="card">
         <div class="flex-center-between">
             <div class="font-semibold text-xl">Transaksi Terbaru</div>
-            <Button icon="pi pi-search" type="button" class="p-button-text" @click="$router.push({ name: 'finance' })"></Button>
+            <Button icon="pi pi-search" type="button" class="p-button-text" @click="$router.push({ name: 'transactions' })"></Button>
         </div>
         <DataTable :value="transactions" responsiveLayout="scroll" :loading="loading">
             <template #empty>
