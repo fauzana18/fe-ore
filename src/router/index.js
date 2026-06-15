@@ -146,7 +146,7 @@ const router = createRouter({
         },
 
         {
-            path: '/auth/login',
+            path: '/login',
             name: 'login',
             component: () => import('@/views/pages/auth/Login.vue')
         },
@@ -162,5 +162,11 @@ const router = createRouter({
         }
     ]
 });
+
+router.beforeEach(async (to, from) => {
+    if (!localStorage.getItem("pin") && to.name !== 'login') {
+      return '/login'
+    }
+})
 
 export default router;

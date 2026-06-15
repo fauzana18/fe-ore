@@ -7,7 +7,7 @@ import { computed, reactive, ref } from 'vue';
 const layoutConfig = reactive({
     preset: localStorage.getItem('preset') || 'Aura',
     primary: localStorage.getItem('primary') || 'emerald',
-    surface: localStorage.getItem('surface') || null,
+    surface: localStorage.getItem('surface') || 'neutral',
     darkTheme: localStorage.getItem('darkTheme') === 'true',
     menuMode: localStorage.getItem('menuMode') || 'static'
 });

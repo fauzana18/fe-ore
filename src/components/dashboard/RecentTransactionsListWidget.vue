@@ -24,8 +24,8 @@ const getList = async () => {
     loading.value = false
 }
 
-watch(profiles, async () => {
-  await this.getList();
+watch(() => profiles.selected, async () => {
+    await getList()
 })
 
 onMounted(async () => {

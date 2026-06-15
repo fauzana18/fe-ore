@@ -1,9 +1,44 @@
 <script setup>
+import { ref } from 'vue'
 import { useLayout } from '@/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
+import AppProfiles from './AppProfiles.vue';
+import { profileStore, saldoStore } from '@/store/finance'
 
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
+const profiles = profileStore()
+const saldo = saldoStore()
+const showProfiles = ref(false)
+
+const toggleProfiles = () => {
+    showProfiles.value = !showProfiles.value
+}
+
+const changeProfile = (dir) => {
+    if(dir == 'top') {
+        if(profiles.selected == profiles.list.length - 1) profiles.selected = 0
+        else profiles.selected++
+        saldo.getSaldo(profiles.list[profiles.selected].id)
+    }
+    else if(dir == 'bottom') {
+        if(profiles.selected == 0) profiles.selected = profiles.list.length - 1
+        else profiles.selected--
+        saldo.getSaldo(profiles.list[profiles.selected].id)
+    }
+}
 </script>
+
+<style scoped>
+.profile-logo {
+    width: 35px;
+    height: 35px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+</style>
 
 <template>
     <div class="layout-topbar">
@@ -49,10 +84,14 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
                     </button>
                     <AppConfigurator />
                 </div>
-                <button type="button" class="layout-topbar-action">
-                    <i class="pi pi-user"></i>
-                    <span>Profile</span>
-                </button>
+                <div class="relative">
+                    <button id="profile-btn" @click="toggleProfiles" type="button" class="layout-topbar-action" v-touch:swipe="changeProfile">
+                        <div class="profile-logo" :style="`background-color: ${profiles.list[profiles.selected] ? profiles.list[profiles.selected].color : ''};`">
+                            {{profiles.list[profiles.selected] ? profiles.list[profiles.selected].name.charAt(0) : ''}}
+                        </div>
+                    </button>
+                    <AppProfiles v-if="showProfiles" @close="showProfiles = false" />
+                </div>
             </div>
         </div>
     </div>
