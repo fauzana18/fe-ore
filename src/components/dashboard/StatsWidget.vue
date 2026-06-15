@@ -17,14 +17,6 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped lang="scss">
-@media screen and (max-width: 575px) {
-    .blm {
-        display: none;
-    }
-}
-</style>
-
 <template>
     <div class="col-span-12 lg:col-span-6 xl:col-span-3">
         <div class="card mb-0">
@@ -52,7 +44,7 @@ onMounted(async () => {
             </div>
         </div>
     </div>
-    <div class="col-span-12 lg:col-span-6 xl:col-span-3 blm">
+    <div class="col-span-12 lg:col-span-6 xl:col-span-3 hidden md:block">
         <div class="card mb-0">
             <div class="flex justify-between mb-4">
                 <div>
@@ -65,7 +57,7 @@ onMounted(async () => {
             </div>
         </div>
     </div>
-    <div class="col-span-12 lg:col-span-6 xl:col-span-3 blm">
+    <div class="col-span-12 lg:col-span-6 xl:col-span-3 hidden md:block">
         <div class="card mb-0">
             <div class="flex justify-between mb-4">
                 <div>

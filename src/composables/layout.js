@@ -258,14 +258,8 @@ export function useLayout() {
         $t().preset(presetValue).preset(getPresetExt()).surfacePalette(surfacePalette).use({ useDefaultOptions: true });
     }
 
-    const checkMobileView = async () => {
-        return new Promise(resolve=>{
-            if(window.innerWidth < 768 || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) {
-                resolve(true)
-            } 
-            
-            resolve(false)
-        })
+    const checkMobileView = () => {
+        return (window.innerWidth < 768 || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) )
     }
 
     return {

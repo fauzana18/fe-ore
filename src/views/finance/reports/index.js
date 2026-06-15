@@ -111,6 +111,8 @@ export default {
                 const name = each.split('_')
 				return {
 					name: `${monthNames[name[0]]} ${name[1]}`,
+					month: name[0].toString().padStart(2, '0'),
+					year: name[1].slice(-2),
 					in: monthly[each].pemasukan,
 					out: monthly[each].pengeluaran
 				}
@@ -229,7 +231,7 @@ export default {
 			this.initLineData()
 		},
         isDarkTheme() {
-            return localStorage.getItem('dark') == 'true'
+            return localStorage.getItem('darkTheme') == 'true'
         },
 		applyLightTheme() {
 			this.lineOptions = {

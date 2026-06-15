@@ -47,7 +47,7 @@
             
             <div class="flex flex-col md:flex-row">
                 <div class="w-full md:pr-2">
-                    <DataTable :value="pengeluaran" responsiveLayout="scroll" :loading="loading">
+                    <DataTable :value="pengeluaran" responsiveLayout="scroll" :loading="loading" :pt="{header: {class: 'hidden md:block'}}">
                         <template #header>
                             <div class="font-semibold">Pengeluaran</div>
                         </template>
@@ -57,24 +57,54 @@
                         <template #loading>
                             Memuat data. Mohon tunggu.
                         </template>
-                        <Column field="name" header="Judul"></Column>
-                        <Column field="amount" header="Jumlah" style="width:25%">
+                        <Column field="name">
+                            <template #header>
+                                <span class="hidden md:inline">Judul</span>
+                                <span class="md:hidden font-semibold">Pengeluaran</span>
+                            </template>
+                            <template #body="slotProps">
+                                <div class="md:block">
+                                    <div class="hidden md:block">
+                                        {{ slotProps.data.name }}
+                                    </div>
+
+                                    <div class="md:hidden">
+                                        <div class="flex justify-between items-center mb-4">
+                                            <div class="font-semibold">Judul</div>
+                                            <div>{{ slotProps.data.name }}</div>
+                                        </div>
+                                        <div class="flex justify-between items-center mb-4">
+                                            <div class="font-semibold">Jumlah</div>
+                                            <div>{{formatCurrency(slotProps.data.amount)}}</div>
+                                        </div>
+                                        <div class="flex justify-between items-center">
+                                            <div></div>
+                                            <div>
+                                                <Button icon="pi pi-pencil" severity="success" rounded class="mr-2" @click="editPlan(slotProps.data)" />
+                                                <Button icon="pi pi-trash" severity="warn" rounded @click="confirmDeletePlan(slotProps.data)" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </Column>
+                        <Column field="amount" header="Jumlah" style="width:25%" class="hidden md:table-cell">
                             <template #body="slotProps">
                                 <span>{{formatCurrency(slotProps.data.amount)}}</span>
                             </template>
                         </Column>
-                        <Column style="width:15%">
+                        <Column style="width:20%" class="hidden md:table-cell">
                             <template #body="slotProps">
                                 <div>
-                                    <Button icon="pi pi-pencil" severity="success" rounded class="mr-2" @click="editPlan(slotProps.data)" />
-                                    <Button icon="pi pi-trash" severity="warn" rounded class="mt-2" @click="confirmDeletePlan(slotProps.data)" />
+                                    <Button size="large" icon="pi pi-pencil" severity="success" rounded class="mr-2" @click="editPlan(slotProps.data)" />
+                                    <Button size="large" icon="pi pi-trash" severity="warn" rounded @click="confirmDeletePlan(slotProps.data)" />
                                 </div>
                             </template>
                         </Column>
                     </DataTable>
                 </div>
                 <div class="w-full mt-6 md:mt-0 md:pl-2">
-                    <DataTable :value="pemasukan" responsiveLayout="scroll" :loading="loading">
+                    <DataTable :value="pemasukan" responsiveLayout="scroll" :loading="loading" :pt="{header: {class: 'hidden md:block'}}">
                         <template #header>
                             <div class="font-semibold">Pemasukan</div>
                         </template>
@@ -84,17 +114,47 @@
                         <template #loading>
                             Memuat data. Mohon tunggu.
                         </template>
-                        <Column field="name" header="Judul"></Column>
-                        <Column field="amount" header="Jumlah" style="width:25%">
+                        <Column field="name">
+                            <template #header>
+                                <span class="hidden md:inline">Judul</span>
+                                <span class="md:hidden font-semibold">Pemasukan</span>
+                            </template>
+                            <template #body="slotProps">
+                                <div class="md:block">
+                                    <div class="hidden md:block">
+                                        {{ slotProps.data.name }}
+                                    </div>
+
+                                    <div class="md:hidden">
+                                        <div class="flex justify-between items-center mb-4">
+                                            <div class="font-semibold">Judul</div>
+                                            <div>{{ slotProps.data.name }}</div>
+                                        </div>
+                                        <div class="flex justify-between items-center mb-4">
+                                            <div class="font-semibold">Jumlah</div>
+                                            <div>{{formatCurrency(slotProps.data.amount)}}</div>
+                                        </div>
+                                        <div class="flex justify-between items-center">
+                                            <div></div>
+                                            <div>
+                                                <Button icon="pi pi-pencil" severity="success" rounded class="mr-2" @click="editPlan(slotProps.data)" />
+                                                <Button icon="pi pi-trash" severity="warn" rounded @click="confirmDeletePlan(slotProps.data)" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </Column>
+                        <Column field="amount" header="Jumlah" style="width:25%" class="hidden md:table-cell">
                             <template #body="slotProps">
                                 <span>{{formatCurrency(slotProps.data.amount)}}</span>
                             </template>
                         </Column>
-                        <Column style="width:15%">
+                        <Column style="width:20%" class="hidden md:table-cell">
                             <template #body="slotProps">
                                 <div>
-                                    <Button icon="pi pi-pencil" severity="success" rounded class="mr-2" @click="editPlan(slotProps.data)" />
-                                    <Button icon="pi pi-trash" severity="warn" rounded class="mt-2" @click="confirmDeletePlan(slotProps.data)" />
+                                    <Button size="large" icon="pi pi-pencil" severity="success" rounded class="mr-2" @click="editPlan(slotProps.data)" />
+                                    <Button size="large" icon="pi pi-trash" severity="warn" rounded @click="confirmDeletePlan(slotProps.data)" />
                                 </div>
                             </template>
                         </Column>

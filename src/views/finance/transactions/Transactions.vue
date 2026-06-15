@@ -60,151 +60,189 @@
                         <InputIcon class="pi pi-search" />
                         <InputText size="large" v-model="filters.name" placeholder="Pencarian..." @change="onFilter" class="w-full md:w-65" />
                     </IconField>
-                    <Select v-if="selectedMode && selectedMode.code == 2" size="large" v-model="showrows_selected" :options="showrows" optionLabel="label" placeholder="Show Data Amount" class="w-full mt-10 mb-3 md:!hidden text-center" @change="onSelectRows"/>
                 </div>
             </div>
             
-            <div class="md:hidden">
-                <DataView :value="transactions" layout="list">
-                    <template #list="slotProps">
-                        <div class="flex flex-col">
-                            <div v-for="(item, index) in slotProps.items" :key="index">
-                                <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4" :class="{ 'border-t border-surface': index !== 0 }">
-                                    <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
-                                        <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-                                            <div>
-                                                <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.category.name }}</span>
-                                                <div class="text-lg font-medium mt-2">{{ item.name }}</div>
-                                            </div>
-                                            <div class="bg-surface-100 p-1" style="border-radius: 30px">
-                                                <div
-                                                    class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2"
-                                                    style="
-                                                        border-radius: 30px;
-                                                        box-shadow:
-                                                            0px 1px 2px 0px rgba(0, 0, 0, 0.04),
-                                                            0px 1px 2px 0px rgba(0, 0, 0, 0.06);
-                                                    "
-                                                >
-                                                    <span class="text-surface-900 font-medium text-sm">{{dateHandler2(item.created)}}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex flex-row justify-between gap-6 ">
-                                            <span class="text-2xl font-semibold" :class="item.category.type == 'Pengeluaran' ? 'text-red' : 'text-green'">{{formatCurrency(item.amount)}}</span>
-                                            <div>
-                                                <Button icon="pi pi-pencil" severity="success" class="mr-2" rounded @click="editTransaction(item)" />
-                                                <Button icon="pi pi-trash" severity="warn" rounded @click="confirmDeleteTransaction(item)" />
-                                            </div>
-                                        </div>
+            <DataTable v-if="selectedMode && selectedMode.code == 2" ref="dt" :value="transactions" :lazy="true" v-model:selection="selectedTransactions" dataKey="id" :paginator="true" :rows="10" :loading="loading" @sort="onSortPage($event)"
+                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]" :pageLinkSize="3"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} transactions" :totalRecords="totalRecords" @page="onSortPage($event)" :key="rerender">
+                <template #empty>
+                    Data kosong.
+                </template>
+                <template #loading>
+                    Memuat data. Mohon tunggu.
+                </template>
+
+                <Column selectionMode="multiple" headerStyle="width: 3rem" class="hidden md:table-cell"></Column>
+                <Column field="created" :sortable="!checkMobileView()" headerStyle="width:14%; min-width:10rem;" :pt="{headerCell: {class: '!p-0 md:!py-3 md:!px-4'}}">
+                    <template #header>
+                        <span class="hidden md:inline">Tanggal</span>
+                    </template>
+                    <template #body="slotProps">
+                        <div class="md:block">
+                            <div class="hidden md:block">
+                                {{dateHandler(slotProps.data.created)}}
+                            </div>
+
+                            <div class="md:hidden">
+                                <div class="flex justify-between items-center mb-8">
+                                    <div class="font-semibold"></div>
+                                    <div><Checkbox size="large" v-model="selectedTransactions" :value="slotProps.data" /></div>
+                                </div>
+                                <div class="flex justify-between items-center mb-8">
+                                    <div class="font-semibold">Tanggal</div>
+                                    <div>{{dateHandler(slotProps.data.created)}}</div>
+                                </div>
+                                <div class="flex justify-between items-center mb-8">
+                                    <div class="font-semibold">Judul</div>
+                                    <div>{{ slotProps.data.name }}</div>
+                                </div>
+                                <div class="flex justify-between items-center mb-8">
+                                    <div class="font-semibold">Jumlah</div>
+                                    <div>{{formatCurrency(slotProps.data.amount)}}</div>
+                                </div>
+                                <div class="flex justify-between items-center mb-8">
+                                    <div class="font-semibold">Tipe</div>
+                                    <div>{{formatCurrency(slotProps.data.category.type)}}</div>
+                                </div>
+                                <div class="flex justify-between items-center mb-8">
+                                    <div class="font-semibold">Kategori</div>
+                                    <div>{{formatCurrency(slotProps.data.category.name)}}</div>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <div></div>
+                                    <div>
+                                        <Button size="large" icon="pi pi-pencil" severity="success" class="mr-2" rounded @click="editTransaction(slotProps.data)" />
+                                        <Button size="large" icon="pi pi-trash" severity="warn" class="mt-2" rounded @click="confirmDeleteTransaction(slotProps.data)" />
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </template>
-                </DataView>
-            </div>
-
-            <div v-if="selectedMode && selectedMode.code == 2" class="md:hidden">
-                <Paginator template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink" currentPageReportTemplate="{currentPage} of {totalPages}" @page="onPage($event)" :rows="rows" :totalRecords="totalRecords"></Paginator>
-            </div>
-
-            <div v-if="selectedMode && selectedMode.code == 2" class="hidden md:block" >
-                <DataTable ref="dt" :value="transactions" :lazy="true" v-model:selection="selectedTransactions" dataKey="id" :paginator="true" :rows="rows" :loading="loading" @sort="onSort($event)"
-                            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]" :pageLinkSize="3"
-                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} transactions" :totalRecords="totalRecords" @page="onPage($event)" :key="rerender">
-                    <template #empty>
-                        Data kosong.
+                </Column>
+                <Column field="name" header="Judul" :sortable="true" headerStyle="width:30%; min-width:10rem;" class="hidden md:table-cell">
+                    <template #body="slotProps">
+                        {{slotProps.data.name}}
                     </template>
-                    <template #loading>
-                        Memuat data. Mohon tunggu.
+                </Column>
+                <Column field="amount" header="Jumlah" :sortable="true" headerStyle="width:14%; min-width:10rem;" class="hidden md:table-cell">
+                    <template #body="slotProps">
+                        {{formatCurrency(slotProps.data.amount)}}
                     </template>
+                </Column>
+                <Column field="category.type" header="Tipe" headerStyle="width:14%; min-width:8rem;" class="hidden md:table-cell">
+                    <template #body="slotProps">
+                        {{slotProps.data.category.type}}
+                    </template>
+                </Column>
+                <Column field="category_id" header="Kategori" :sortable="true" headerStyle="width:14%; min-width:10rem;" class="hidden md:table-cell">
+                    <template #body="slotProps">
+                        {{slotProps.data.category.name}}
+                    </template>
+                </Column>
+                <Column headerStyle="min-width:10rem;" class="hidden md:table-cell">
+                    <template #body="slotProps">
+                        <div>
+                            <Button size="large" icon="pi pi-pencil" severity="success" class="mr-2" rounded @click="editTransaction(slotProps.data)" />
+                            <Button size="large" icon="pi pi-trash" severity="warn" class="mt-2" rounded @click="confirmDeleteTransaction(slotProps.data)" />
+                        </div>
+                    </template>
+                </Column>
+            </DataTable>
 
-                    <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                    <Column field="created" header="Tanggal" :sortable="true" headerStyle="width:14%; min-width:10rem;">
-                        <template #body="slotProps">
-                            {{dateHandler(slotProps.data.created)}}
-                        </template>
-                    </Column>
-                    <Column field="name" header="Judul" :sortable="true" headerStyle="width:30%; min-width:10rem;">
-                        <template #body="slotProps">
-                            {{slotProps.data.name}}
-                        </template>
-                    </Column>
-                    <Column field="amount" header="Jumlah" :sortable="true" headerStyle="width:14%; min-width:10rem;">
-                        <template #body="slotProps">
-                            {{formatCurrency(slotProps.data.amount)}}
-                        </template>
-                    </Column>
-                    <Column field="category.type" header="Tipe" headerStyle="width:14%; min-width:8rem;">
-                        <template #body="slotProps">
-                            {{slotProps.data.category.type}}
-                        </template>
-                    </Column>
-                    <Column field="category_id" header="Kategori" :sortable="true" headerStyle="width:14%; min-width:10rem;">
-                        <template #body="slotProps">
-                            {{slotProps.data.category.name}}
-                        </template>
-                    </Column>
-                    <Column headerStyle="min-width:10rem;">
-                        <template #body="slotProps">
-                            <div>
-                                <Button size="large" icon="pi pi-pencil" severity="success" class="mr-2" rounded @click="editTransaction(slotProps.data)" />
-                                <Button size="large" icon="pi pi-trash" severity="warn" class="mt-2" rounded @click="confirmDeleteTransaction(slotProps.data)" />
+            <DataTable v-else :value="transactions" rowGroupMode="subheader" groupRowsBy="created" dataKey="id" :key="'table2'+rerender"
+                sortMode="single" sortField="created" :sortOrder="-1" :loading="loading"
+                :expandableRowGroups="true" v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand">
+                <template #empty>
+                    Data kosong.
+                </template>
+                <template #loading>
+                    Memuat data. Mohon tunggu.
+                </template>
+                <Column field="created" header="Representative"></Column>
+                <Column field="name" :pt="{headerCell: {class: '!p-0 md:!py-3 md:!px-4'}}">
+                    <template #header>
+                        <span class="hidden md:inline">Judul</span>
+                    </template>
+                    <template #body="slotProps">
+                        <div class="md:block">
+                            <div class="hidden md:block">
+                                {{ slotProps.data.name }}
                             </div>
-                        </template>
-                    </Column>
-                </DataTable>
-            </div>
 
-            <div v-else class="hidden md:block">
-                <DataTable :value="transactions" rowGroupMode="subheader" groupRowsBy="created" dataKey="id" :key="'table2'+rerender"
-                    sortMode="single" sortField="created" :sortOrder="-1" :loading="loading"
-                    :expandableRowGroups="true" v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand">
-                    <template #empty>
-                        Data kosong.
-                    </template>
-                    <template #loading>
-                        Memuat data. Mohon tunggu.
-                    </template>
-                    <Column field="created" header="Representative"></Column>
-                    <Column field="name" header="Judul"></Column>
-                    <Column field="amount" header="Jumlah">
-                        <template #body="slotProps">
-                            {{formatCurrency(slotProps.data.amount)}}
-                        </template>
-                    </Column>
-                    <Column field="category.type" header="Tipe"></Column>
-                    <Column field="category_id" header="Kategori">
-                        <template #body="slotProps">
-                            {{slotProps.data.category.name}}
-                        </template>
-                    </Column>
-                    <Column headerStyle="min-width:10rem;">
-                        <template #body="slotProps">
-                            <div>
-                                <Button size="large" icon="pi pi-pencil" severity="success" class="mr-2" rounded @click="editTransaction(slotProps.data)" />
-                                <Button size="large" icon="pi pi-trash" severity="warn" class="mt-2" rounded @click="confirmDeleteTransaction(slotProps.data)" />
-                            </div>
-                        </template>
-                    </Column>
-                    <template #groupheader="slotProps">
-                        <span>{{dateHandler(slotProps.data.created)}}</span>
-                    </template>
-                    <template #groupfooter="slotProps">
-                        <div class="flex flex-row justify-end" style="width: 80%;">
-                            <div class="my-1 mr-5 flex flex-col">
-                                <span>Pengeluaran</span>
-                                <span>Pemasukan</span>
-                            </div>
-                            <div class="my-1 flex flex-col">
-                                <span>{{calculateAmount(slotProps.data.created, 'Pengeluaran')}}</span>
-                                <span style="color: green;">{{calculateAmount(slotProps.data.created, 'Pemasukan')}}</span>
+                            <div class="md:hidden">
+                                <div class="flex justify-between items-center mb-8">
+                                    <div class="font-semibold">Judul</div>
+                                    <div>{{ slotProps.data.name }}</div>
+                                </div>
+                                <div class="flex justify-between items-center mb-8">
+                                    <div class="font-semibold">Jumlah</div>
+                                    <div>{{formatCurrency(slotProps.data.amount)}}</div>
+                                </div>
+                                <div class="flex justify-between items-center mb-8">
+                                    <div class="font-semibold">Tipe</div>
+                                    <div>{{formatCurrency(slotProps.data.category.type)}}</div>
+                                </div>
+                                <div class="flex justify-between items-center mb-8">
+                                    <div class="font-semibold">Kategori</div>
+                                    <div>{{formatCurrency(slotProps.data.category.name)}}</div>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <div></div>
+                                    <div>
+                                        <Button size="large" icon="pi pi-pencil" severity="success" class="mr-2" rounded @click="editTransaction(slotProps.data)" />
+                                        <Button size="large" icon="pi pi-trash" severity="warn" class="mt-2" rounded @click="confirmDeleteTransaction(slotProps.data)" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </template>
-                </DataTable>
-            </div>
+                </Column>
+                <Column field="amount" header="Jumlah" class="hidden md:table-cell">
+                    <template #body="slotProps">
+                        {{formatCurrency(slotProps.data.amount)}}
+                    </template>
+                </Column>
+                <Column field="category.type" header="Tipe" class="hidden md:table-cell"></Column>
+                <Column field="category_id" header="Kategori" class="hidden md:table-cell">
+                    <template #body="slotProps">
+                        {{slotProps.data.category.name}}
+                    </template>
+                </Column>
+                <Column headerStyle="min-width:10rem;" class="hidden md:table-cell">
+                    <template #body="slotProps">
+                        <div>
+                            <Button size="large" icon="pi pi-pencil" severity="success" class="mr-2" rounded @click="editTransaction(slotProps.data)" />
+                            <Button size="large" icon="pi pi-trash" severity="warn" class="mt-2" rounded @click="confirmDeleteTransaction(slotProps.data)" />
+                        </div>
+                    </template>
+                </Column>
+                <template #groupheader="slotProps">
+                    <span class="float-right md:float-none">{{dateHandler(slotProps.data.created)}}</span>
+                </template>
+                <template #groupfooter="slotProps">
+                    <div class="hidden md:flex flex-row justify-end w-[80%]">
+                        <div class="my-1 mr-5 flex flex-col">
+                            <span>Pengeluaran</span>
+                            <span>Pemasukan</span>
+                        </div>
+                        <div class="my-1 flex flex-col">
+                            <span>{{calculateAmount(slotProps.data.created, 'Pengeluaran')}}</span>
+                            <span style="color: green;">{{calculateAmount(slotProps.data.created, 'Pemasukan')}}</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-row items-center justify-center w-full md:hidden ">
+                        <div class="flex flex-col items-center justify-center w-[50%]">
+                            <span class=" mb-8">Pengeluaran</span>
+                            <span>{{calculateAmount(slotProps.data.created, 'Pengeluaran')}}</span>
+                        </div>
+                        <div class="flex flex-col items-center justify-center w-[50%]">
+                            <span class=" mb-8">Pemasukan</span>
+                            <span style="color: green;">{{calculateAmount(slotProps.data.created, 'Pemasukan')}}</span>
+                        </div>
+                    </div>
+                </template>
+            </DataTable>
 
             <Dialog :header="header2" v-model:visible="importDialog" :breakpoints="{'960px': '75vw'}" :style="{width: '30vw'}" :modal="true" :dismissableMask="true">
                 <Button v-if="header2 == 'Import'" label="Download Template" size="large" severity="success" icon="pi pi-download" class="mt-2 w-full" @click="downloadTemplate" />

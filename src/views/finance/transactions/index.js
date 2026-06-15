@@ -16,13 +16,6 @@ export default {
 			transaction: {},
 			loading: true,
 			totalRecords: 0,
-			rows: 10,
-			showrows: [
-				{ label: 'Showing 5 Rows', rows: 5 },
-				{ label: 'Showing 10 Rows', rows: 10 },
-				{ label: 'Showing 25 Rows', rows: 25 },
-			],
-			showrows_selected: { label: 'Showing 10 Rows', rows: 10 }, 
 			lazyParams: {},
 			profiles: profileStore(),
 			category: categoryStore(),
@@ -383,7 +376,7 @@ export default {
 			this.rerender++
 			await this.getList()
 		},
-		async onPage(e) {
+		async onSortPage(e) {
 			let cleansedQuery = this.cleansingQuery(this.filters)
 			this.lazyParams = {
 				offset: this.selectedMode.code == 2 ? e.first : null,
@@ -394,30 +387,6 @@ export default {
 			}
 			await this.getList()
 			this.scrollTop()
-		},
-		async onSelectRows(e) {
-			let cleansedQuery = this.cleansingQuery(this.filters)
-			this.lazyParams = {
-				offset: 0,
-				limit: e.value.rows,
-				order: ['created', 'DESC'],
-				profile_id: this.profiles.list[this.profiles.selected] ? this.profiles.list[this.profiles.selected].id : 1,
-				...cleansedQuery
-			}
-			this.rows = e.value.rows
-			await this.getList()
-			this.scrollTop()
-		},
-		async onSort(e) {
-			let cleansedQuery = this.cleansingQuery(this.filters)
-			this.lazyParams = {
-				offset: this.selectedMode.code == 2 ? e.first : null,
-				limit: this.selectedMode.code == 2 ? e.rows : null,
-				order: this.selectedMode.code == 2 ? [e.sortField, e.sortOrder == 1 ? 'ASC' : 'DESC'] : ['created', 'DESC'],
-				profile_id: this.profiles.list[this.profiles.selected] ? this.profiles.list[this.profiles.selected].id : 1,
-				...cleansedQuery
-			}
-			await this.getList()
 		},
 		async onFilter(e) {
 			if(this.filters.created.code == 6) {
@@ -877,5 +846,8 @@ export default {
 			this.$toast.add({severity: stat, summary, detail: message, life: 3000})
 			this.deletingCategory = false
 		},
+		checkMobileView(){
+            return (window.innerWidth < 768 || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)))
+        }
 	}
 }

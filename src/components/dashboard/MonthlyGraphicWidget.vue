@@ -103,8 +103,8 @@ watch(saldo, () => {
   chartData.value = setChartData();
 })
 
-onMounted(async () => {
-    isMobile.value = await checkMobileView()
+onMounted(() => {
+    isMobile.value = checkMobileView()
     chartData.value = setChartData();
     chartOptions.value = setChartOptions();
 });

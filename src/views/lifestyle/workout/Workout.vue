@@ -26,10 +26,9 @@
 					Memuat data. Mohon tunggu.
 				</template>
 				<Column field="date" header="Representative"></Column>
-				<Column field="movement.name">
+				<Column field="movement.name" :pt="{headerCell: {class: 'hidden md:block'}}">
 					<template #header>
 						<span class="hidden md:inline">Gerakan</span>
-						<span class="md:hidden">Workout</span>
 					</template>
 					<template #body="slotProps">
 						<div class="md:block">
@@ -92,7 +91,7 @@
 					</template>
 				</Column>
 				<template #groupheader="slotProps">
-					<span>{{dateHandler(slotProps.data.date)}}</span>
+					<span class="float-right md:float-none">{{dateHandler(slotProps.data.date)}}</span>
 				</template>
 				<template #groupfooter="slotProps">
 					<div class="flex justify-end">
