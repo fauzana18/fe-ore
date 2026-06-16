@@ -262,6 +262,10 @@ export function useLayout() {
         return (window.innerWidth < 768 || (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) )
     }
 
+    const topbarImage = () => {
+        return isDarkTheme.value ? 'demo/images/logo-ore-dark.png' : 'demo/images/logo-ore-white.png';
+    }
+
     return {
         layoutConfig,
         layoutState,
@@ -282,6 +286,7 @@ export function useLayout() {
         surfaces,
         updateColors,
         onPresetChange,
-        checkMobileView
+        checkMobileView,
+        topbarImage
     };
 }

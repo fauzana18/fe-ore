@@ -1,4 +1,12 @@
 <script setup>
+import { ref } from 'vue'
+import { useLayout } from '@/composables/layout';
+const { topbarImage } = useLayout();
+const imageUrl = ref(topbarImage())
+
+const handleError = () => {
+  imageUrl.value = `/${topbarImage()}`
+}
 function smoothScroll(id) {
     document.body.click();
     const element = document.getElementById(id);
@@ -13,7 +21,7 @@ function smoothScroll(id) {
 
 <template>
     <a class="flex items-center" href="#">
-        <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-12 mr-2">
+        <!-- <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-12 mr-2">
             <path
                 fill-rule="evenodd"
                 clip-rule="evenodd"
@@ -29,7 +37,8 @@ function smoothScroll(id) {
                     fill="var(--primary-color)"
                 />
             </g>
-        </svg>
+        </svg> -->
+        <img alt="Logo" :src="imageUrl" @error="handleError" width="30" />
         <span class="text-surface-900 dark:text-surface-0 font-medium text-2xl leading-normal mr-20">Ore no App</span>
     </a>
     <Button

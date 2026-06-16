@@ -5,7 +5,12 @@ import AppConfigurator from './AppConfigurator.vue';
 import AppProfiles from './AppProfiles.vue';
 import { profileStore, saldoStore } from '@/store/finance'
 
-const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
+const { toggleMenu, toggleDarkMode, isDarkTheme, topbarImage } = useLayout();
+const imageUrl = ref(topbarImage())
+
+const handleError = () => {
+  imageUrl.value = `/${topbarImage()}`
+}
 const profiles = profileStore()
 const saldo = saldoStore()
 const showProfiles = ref(false)
@@ -47,7 +52,7 @@ const changeProfile = (dir) => {
                 <i class="pi pi-bars"></i>
             </button>
             <router-link to="/" class="layout-topbar-logo">
-                <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         fill-rule="evenodd"
                         clip-rule="evenodd"
@@ -63,7 +68,8 @@ const changeProfile = (dir) => {
                             fill="var(--primary-color)"
                         />
                     </g>
-                </svg>
+                </svg> -->
+                <img alt="Logo" :src="imageUrl" @error="handleError" width="30" />
 
                 <span>Ore no App</span>
             </router-link>

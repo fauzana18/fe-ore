@@ -43,6 +43,11 @@ const model = ref([
                 icon: 'pi pi-fw pi-bolt',
                 to: '/lifestyle/workout'
             },
+            {
+                label: 'Manajemen Password',
+                icon: 'pi pi-fw pi-lock',
+                to: '/lifestyle/passwordmanagement'
+            },
         ]
     },
     {
@@ -185,7 +190,7 @@ const model = ref([
             {
                 label: 'Not Found',
                 icon: 'pi pi-fw pi-exclamation-circle',
-                to: '/pages/notfound'
+                to: '/notfound'
             },
             {
                 label: 'Empty',

@@ -1,8 +1,17 @@
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+import { useLayout } from '@/composables/layout';
+const { topbarImage } = useLayout();
+const imageUrl = ref(topbarImage())
+
+const handleError = () => {
+  imageUrl.value = `/${topbarImage()}`
+}
+</script>
 
 <template>
     <div class="layout-footer">
-        <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg" height="20">
+        <!-- <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg" height="20">
             <path
                 fill-rule="evenodd"
                 clip-rule="evenodd"
@@ -18,8 +27,9 @@
                     fill="var(--primary-color)"
                 />
             </g>
-        </svg>
-		by
-		<span class="font-medium ml-2">PrimeVue</span>
+        </svg> -->
+        <img alt="Logo" :src="imageUrl" @error="handleError" width="30" />
+		<!-- by -->
+		<span class="font-medium ml-2">Ore no App</span>
     </div>
 </template>

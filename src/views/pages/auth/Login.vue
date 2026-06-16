@@ -2,7 +2,9 @@
 import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
+import { useLayout } from '@/composables/layout';
 
+const { topbarImage } = useLayout();
 const router = useRouter()
 const email = ref('');
 const password = ref('');
@@ -27,7 +29,7 @@ const handleEnter = (e) => {
     <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
         <div class="flex flex-col items-center justify-center w-full">
             <div>
-                <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="mb-8 w-16 shrink-0 mx-auto">
+                <!-- <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="mb-8 w-16 shrink-0 mx-auto">
                     <path
                         fill-rule="evenodd"
                         clip-rule="evenodd"
@@ -43,7 +45,8 @@ const handleEnter = (e) => {
                             fill="var(--primary-color)"
                         />
                     </g>
-                </svg>
+                </svg> -->
+                <img alt="Logo" :src="topbarImage()" class="mb-8 w-16 shrink-0 mx-auto" />
             </div>
             <div class="w-full md:w-auto" style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
                 <div class="w-full bg-surface-0 dark:bg-surface-900 py-20 px-8 sm:px-20" style="border-radius: 53px">

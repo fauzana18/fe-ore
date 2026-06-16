@@ -34,6 +34,14 @@ const router = createRouter({
                     component: () => import('@/views/lifestyle/workout/Workout.vue')
                 },
                 {
+                    path: '/lifestyle/passwordmanagement',
+                    name: 'passwordmgt',
+                    component: () => import('@/views/lifestyle/passwordmgt/PasswordManagement.vue'),
+                    // meta: {
+                    //     requiresPassword: true
+                    // }
+                },
+                {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('@/views/uikit/FormLayout.vue')
@@ -140,11 +148,14 @@ const router = createRouter({
             component: () => import('@/views/pages/Landing.vue')
         },
         {
-            path: '/pages/notfound',
+            path: '/notfound',
             name: 'notfound',
             component: () => import('@/views/pages/NotFound.vue')
         },
-
+        {
+            path: '/:pathMatch(.*)*',
+            redirect: '/notfound'
+        },
         {
             path: '/login',
             name: 'login',
@@ -165,8 +176,20 @@ const router = createRouter({
 
 router.beforeEach(async (to, from) => {
     if (!localStorage.getItem("pin") && to.name !== 'login') {
-      return '/login'
+        return '/login'
     }
+
+    // if (to.meta.requiresPassword) {
+    //     const password = prompt('Masukkan password')
+
+    //     if (password === import.meta.env.VITE_PASSWORD) {
+    //         next()
+    //     } else {
+    //         next('/')
+    //     }
+    // } else {
+    //     next()
+    // }
 })
 
 export default router;
