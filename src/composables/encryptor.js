@@ -1,14 +1,14 @@
 import sodium from 'libsodium-wrappers-sumo';
 
-await sodium.ready;
-
 export function useEncryptor() {
-    const generateSalt = () => {
+    const generateSalt = async () => {
+        await sodium.ready;
         const salt = sodium.randombytes_buf(sodium.crypto_pwhash_SALTBYTES);
         return sodium.to_base64(salt);
     }
 
     const deriveVaultKey = async (masterPassword, saltBase64) => {
+        await sodium.ready;
         const salt = sodium.from_base64(saltBase64);
         return sodium.crypto_pwhash(
             32,
@@ -21,6 +21,7 @@ export function useEncryptor() {
     }
 
     const encryptVaultItem = async (plaintextObject, vaultKey) => {
+        await sodium.ready;
         const nonce = sodium.randombytes_buf(sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES);
         const plaintext = JSON.stringify(plaintextObject);
         const ciphertext = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(plaintext, null, null, nonce, vaultKey);
@@ -29,6 +30,7 @@ export function useEncryptor() {
     }
 
     const decryptVaultItem = async (encryptedData, vaultKey) => {
+        await sodium.ready;
         const nonce = sodium.from_base64(encryptedData.nonce);
         const ciphertext = sodium.from_base64(encryptedData.ciphertext);
         const plaintext = sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(null, ciphertext, null, nonce, vaultKey);
