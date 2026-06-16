@@ -63,9 +63,6 @@ export default {
 		this.month = date
 		const namaBulan = date.toLocaleString(this.dateregion, this.dateconfig)
 		this.monthTitle = namaBulan
-		const params = namaBulan.split(' ')
-
-		await this.getPlan(params[0], params[1])
 	},
 	methods: {
 		formatCurrency(value) {
@@ -100,9 +97,6 @@ export default {
 			this.month = date
 			const namaBulan = date.toLocaleString(this.dateregion, this.dateconfig)
 			this.monthTitle = namaBulan
-
-			const params = namaBulan.split(' ')
-			await this.getPlan(params[0], params[1])
 		},
 		openNew() {
 			this.plan = {

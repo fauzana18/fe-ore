@@ -3,6 +3,9 @@ import MonthlyGraphicWidget from '@/components/dashboard/MonthlyGraphicWidget.vu
 import RecentTransactionsListWidget from '@/components/dashboard/RecentTransactionsListWidget.vue';
 import RecentTransactionsWidget from '@/components/dashboard/RecentTransactionsWidget.vue';
 import StatsWidget from '@/components/dashboard/StatsWidget.vue';
+import { useLayout } from '@/composables/layout';
+
+const { checkMobileView } = useLayout();
 </script>
 
 <template>
@@ -10,8 +13,8 @@ import StatsWidget from '@/components/dashboard/StatsWidget.vue';
         <StatsWidget />
 
         <div class="col-span-12 xl:col-span-6">
-            <RecentTransactionsWidget class="!hidden md:!block" />
-            <RecentTransactionsListWidget class="!block md:!hidden" />
+            <RecentTransactionsWidget v-if="!checkMobileView()" />
+            <RecentTransactionsListWidget v-else />
         </div>
         <div class="col-span-12 xl:col-span-6">
             <MonthlyGraphicWidget />

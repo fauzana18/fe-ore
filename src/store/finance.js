@@ -115,3 +115,28 @@ export const saldoStore = defineStore('saldo', {
         }
     },
 })
+
+export const planStore = defineStore('plan', {
+    state: () => {
+        return {
+            in: 0,
+            out: 0
+        }
+    },
+    actions: {
+        async getPlanNextMonth() {
+            this.out = 0
+            this.in = 0
+            const date = new Date()
+            date.setMonth(date.getMonth() + 1)
+            const namaBulan = date.toLocaleString('id-ID', {month: 'long', year: 'numeric'})
+            const params = namaBulan.split(' ')
+            const res = await financeService.getPlanList(params[0], params[1])
+            const result = res.data.result
+            result.map(item => {
+				if(item.type == 'out') this.out += item.amount
+                else this.in += item.amount
+			})
+        }
+    },
+})

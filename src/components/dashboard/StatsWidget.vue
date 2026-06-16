@@ -1,12 +1,13 @@
 <script setup>
 import { useFinance } from '@/composables/finance';
 import FinanceService from '@/service/FinanceService';
-import { saldoStore } from '@/store/finance.js';
+import { saldoStore, planStore } from '@/store/finance.js';
 import { onMounted, ref } from 'vue';
 
 const { formatCurrency } = useFinance();
 const financeService = new FinanceService()
 const saldo = saldoStore()
+const plan = planStore()
 const saldoAll = ref({})
 
 onMounted(async () => {
@@ -44,28 +45,28 @@ onMounted(async () => {
             </div>
         </div>
     </div>
-    <div class="col-span-12 lg:col-span-6 xl:col-span-3 hidden md:block">
+    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
         <div class="card mb-0">
             <div class="flex justify-between mb-4">
                 <div>
-                    <span class="block text-muted-color font-medium mb-4">Customers</span>
-                    <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">28441</div>
+                    <span class="block text-muted-color font-medium mb-4">Plan Pemasukan Bulan Depan</span>
+                    <div class="text-surface-900 dark:text-surface-0 font-medium text-xl text-green">{{formatCurrency(plan.in)}}</div>
                 </div>
                 <div class="flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
-                    <i class="pi pi-users text-cyan-500 text-xl!"></i>
+                    <i class="pi pi-wallet text-cyan-500 text-xl!"></i>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-span-12 lg:col-span-6 xl:col-span-3 hidden md:block">
+    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
         <div class="card mb-0">
             <div class="flex justify-between mb-4">
                 <div>
-                    <span class="block text-muted-color font-medium mb-4">Comments</span>
-                    <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">152 Unread</div>
+                    <span class="block text-muted-color font-medium mb-4">Plan Pengeluaran Bulan Depan</span>
+                    <div class="text-surface-900 dark:text-surface-0 font-medium text-xl text-red">{{formatCurrency(plan.out)}}</div>
                 </div>
                 <div class="flex items-center justify-center bg-purple-100 dark:bg-purple-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
-                    <i class="pi pi-comment text-purple-500 text-xl!"></i>
+                    <i class="pi pi-shopping-cart text-purple-500 text-xl!"></i>
                 </div>
             </div>
             <!-- <span class="text-primary font-medium">85 </span>

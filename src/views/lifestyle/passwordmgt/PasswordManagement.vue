@@ -5,6 +5,7 @@ import { useToast } from "primevue/usetoast";
 import { useLayout } from '@/composables/layout';
 import { useEncryptor } from '@/composables/encryptor';
 import { useFinance } from '@/composables/finance';
+import { vaultKeyStore } from '@/store/crypto.js'
 import DatamgtService from '@/service/DatamgtService';
 
 const datamgtService = new DatamgtService()
@@ -32,6 +33,7 @@ const submitMessage = ref('')
 const history_data = ref([])
 const inputRef = ref()
 const loadingHistory = ref(false)
+const vaultKey = vaultKeyStore()
 
 onMounted(async () => {
     await nextTick()
@@ -41,8 +43,15 @@ onMounted(async () => {
 const checkPassword = async () => {
     if(password.value === import.meta.env.VITE_PASSWORD) {
         passwordDialog.value = false
-        await new Promise(resolve => setTimeout(resolve, 0))
-        key.value = await deriveVaultKey(import.meta.env.VITE_PASSWORD, import.meta.env.VITE_SALT)
+
+        if(vaultKey.key) {
+            key.value = vaultKey.key
+        } else {
+            await new Promise(resolve => setTimeout(resolve, 0))
+            key.value = await deriveVaultKey(import.meta.env.VITE_PASSWORD, import.meta.env.VITE_SALT)
+            vaultKey.setValue(key.value)
+        }
+        
         getData()
     } else {
         router.push({name: 'dashboard'})
