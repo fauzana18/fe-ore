@@ -4,7 +4,7 @@ import { onBeforeUnmount, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import AppMenu from './AppMenu.vue';
 
-const { layoutState, isDesktop, hasOpenOverlay } = useLayout();
+const { layoutState, isDesktop, hasOpenOverlay, hideMobileMenu } = useLayout();
 const route = useRoute();
 const sidebarRef = ref(null);
 let outsideClickListener = null;
@@ -61,6 +61,6 @@ onBeforeUnmount(() => {
 
 <template>
     <div ref="sidebarRef" class="layout-sidebar">
-        <AppMenu />
+        <AppMenu v-touch:swipe.left="hideMobileMenu" />
     </div>
 </template>

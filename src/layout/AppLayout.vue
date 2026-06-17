@@ -5,7 +5,7 @@ import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppTopbar from './AppTopbar.vue';
 
-const { layoutConfig, layoutState, hideMobileMenu } = useLayout();
+const { layoutConfig, layoutState, openMobileMenu, hideMobileMenu } = useLayout();
 
 const containerClass = computed(() => {
     return {
@@ -19,7 +19,7 @@ const containerClass = computed(() => {
 </script>
 
 <template>
-    <div class="layout-wrapper" :class="containerClass">
+    <div class="layout-wrapper" :class="containerClass" v-touch:swipe.right="openMobileMenu">
         <AppTopbar />
         <AppSidebar />
         <div class="layout-main-container">

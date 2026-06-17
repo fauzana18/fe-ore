@@ -121,6 +121,9 @@ export function useLayout() {
             layoutState.mobileMenuActive = !layoutState.mobileMenuActive;
         }
     };
+    const openMobileMenu = () => {
+        layoutState.mobileMenuActive = true
+    }
 
     const toggleConfigSidebar = () => {
         layoutState.configSidebarVisible = !layoutState.configSidebarVisible;
@@ -287,6 +290,7 @@ export function useLayout() {
         updateColors,
         onPresetChange,
         checkMobileView,
-        topbarImage
+        topbarImage,
+        openMobileMenu
     };
 }

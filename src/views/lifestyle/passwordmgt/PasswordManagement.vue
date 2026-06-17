@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router'
 import { useToast } from "primevue/usetoast";
 import { useLayout } from '@/composables/layout';
@@ -7,7 +7,9 @@ import { useEncryptor } from '@/composables/encryptor';
 import { useFinance } from '@/composables/finance';
 import { vaultKeyStore } from '@/store/crypto.js'
 import DatamgtService from '@/service/DatamgtService';
+import { FilterMatchMode } from '@primevue/core/api';
 
+const filters = ref(null);
 const datamgtService = new DatamgtService()
 const { topbarImage } = useLayout();
 const { dateHandler } = useFinance();
@@ -40,6 +42,16 @@ onMounted(async () => {
     await nextTick()
     inputRef.value.$el.focus()
 })
+
+onBeforeMount(() => {
+    initFilters();
+});
+
+const initFilters = () => {
+    filters.value = {
+        webapp: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    };
+}
 
 const checkPassword = async () => {
     if(password.value === import.meta.env.VITE_PASSWORD) {
@@ -190,11 +202,15 @@ const refresh = async () => {
 
             <Toast/>
 
-            <div class="flex justify-end w-full mt-4 mb-8 md:mb-6">
-                <Button size="large" label="Tambah Data Baru" icon="pi pi-plus" severity="success" class="float-right w-full md:w-auto" @click="openInputDialog()"/>
+            <div class="flex w-full mt-4 mb-6 flex-col md:flex-row md:justify-between">
+                <Button size="large" label="Tambah Data Baru" icon="pi pi-plus" severity="success" class="float-right w-full md:w-auto mb-4 md:mb-0" @click="openInputDialog()"/>
+                <IconField class="mb-3 md:mb-0">
+                    <InputIcon class="pi pi-search" />
+                    <InputText size="large" placeholder="Cari Web / Aplikasi" class="w-full md:w-auto" v-model="filters['webapp'].value" />
+                </IconField>
             </div>
 
-            <DataTable :value="data" :loading="loading">
+            <DataTable :value="data" :loading="loading" v-model:filters="filters" :filters="filters">
                 <template #empty>
                     Data kosong.
                 </template>
