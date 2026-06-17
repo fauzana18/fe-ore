@@ -40,6 +40,8 @@ export default {
 			],
 			exportRange: {},
 			monthRange: null,
+			selectButtonValue: 'Pengeluaran',
+			selectButtonOptions: ['Pengeluaran', 'Pemasukan']
 		}
 	},
 	financeService: null,

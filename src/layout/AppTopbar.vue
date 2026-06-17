@@ -71,7 +71,7 @@ const changeProfile = (dir) => {
                 </svg> -->
                 <img alt="Logo" :src="imageUrl" @error="handleError" width="30" />
 
-                <span>Ore no App</span>
+                <span class="hidden md:block">Ore no App</span>
             </router-link>
         </div>
 

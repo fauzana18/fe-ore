@@ -64,8 +64,10 @@
             </div>
             
             <DataTable v-if="selectedMode && selectedMode.code == 2" ref="dt" :value="transactions" :lazy="true" v-model:selection="selectedTransactions" dataKey="id" :paginator="true" :rows="10" :loading="loading" @sort="onSortPage($event)"
-                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]" :pageLinkSize="3"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} transactions" :totalRecords="totalRecords" @page="onSortPage($event)" :key="rerender">
+                        :paginatorTemplate="checkMobileView() ? 'PrevPageLink CurrentPageReport NextPageLink RowsPerPageDropdown' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown'"
+                        :rowsPerPageOptions="[5,10,25]" :pageLinkSize="3"
+                        :currentPageReportTemplate="checkMobileView() ?  '{currentPage} / {totalPages}' : 'Showing {first} to {last} of {totalRecords} transactions'"
+                        :totalRecords="totalRecords" @page="onSortPage($event)" :key="rerender">
                 <template #empty>
                     Data kosong.
                 </template>
@@ -95,7 +97,7 @@
                                 </div>
                                 <div class="flex justify-between items-center mb-8">
                                     <div class="font-semibold">Judul</div>
-                                    <div>{{ slotProps.data.name }}</div>
+                                    <div class="w-[70%] break-word text-right">{{ slotProps.data.name }}</div>
                                 </div>
                                 <div class="flex justify-between items-center mb-8">
                                     <div class="font-semibold">Jumlah</div>
@@ -173,7 +175,7 @@
                             <div class="md:hidden">
                                 <div class="flex justify-between items-center mb-8">
                                     <div class="font-semibold">Judul</div>
-                                    <div>{{ slotProps.data.name }}</div>
+                                    <div class="w-[70%] break-word text-right">{{ slotProps.data.name }}</div>
                                 </div>
                                 <div class="flex justify-between items-center mb-8">
                                     <div class="font-semibold">Jumlah</div>

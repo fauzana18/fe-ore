@@ -55,7 +55,7 @@
 								</div>
 								<div class="flex justify-between items-center">
 									<div class="font-semibold">Keterangan</div>
-									<Button size="large" :label="slotProps.data.note ? slotProps.data.note : 'Edit Note'" @click="editNote(slotProps.data.id, slotProps.data.note)" />
+									<Button class="w-[60%] break-word !p-1" :label="slotProps.data.note ? slotProps.data.note : 'Edit Note'" @click="editNote(slotProps.data.id, slotProps.data.note)" />
 								</div>
 							</div>
 						</div>

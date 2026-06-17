@@ -117,18 +117,18 @@
                     <template #loading>
                         Memuat data. Mohon tunggu.
                     </template>
-                    <Column field="name" header="Bulan">
+                    <Column field="name" header="Bulan" headerClass="!p-2 md:!py-4 md:!px-3" bodyClass="!p-2 md:!py-4 md:!px-3">
                         <template #body="slotProps">
                             <span class="hidden md:block">{{slotProps.data.name}}</span>
                             <span class="block whitespace-nowrap md:hidden">{{slotProps.data.month}}-{{slotProps.data.year}}</span>
                         </template>
                     </Column>
-                    <Column field="in" header="Pengeluaran">
+                    <Column field="in" header="Pengeluaran" headerClass="!p-2 md:!py-4 md:!px-3" bodyClass="!p-2 md:!py-4 md:!px-3">
                         <template #body="slotProps">
                             <span>{{formatCurrency(slotProps.data.out)}}</span>
                         </template>
                     </Column>
-                    <Column field="out" header="Pemasukan">
+                    <Column field="out" header="Pemasukan" headerClass="!p-2 md:!py-4 md:!px-3" bodyClass="!p-2 md:!py-4 md:!px-3">
                         <template #body="slotProps">
                             <span>{{formatCurrency(slotProps.data.in)}}</span>
                         </template>

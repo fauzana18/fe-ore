@@ -44,9 +44,11 @@
                 </div>
                 <Divider></Divider>
             </div>
+
+            <div class="block md:hidden mb-2"><SelectButton fluid size="large" v-model="selectButtonValue" :options="selectButtonOptions" /></div>
             
             <div class="flex flex-col md:flex-row">
-                <div class="w-full md:pr-2">
+                <div class="w-full md:pr-2" :class="selectButtonValue == 'Pengeluaran' ? 'block md:block' : 'hidden md:block'">
                     <DataTable :value="pengeluaran" responsiveLayout="scroll" :loading="loading" :pt="{header: {class: 'hidden md:block'}}">
                         <template #header>
                             <div class="font-semibold">Pengeluaran</div>
@@ -71,7 +73,7 @@
                                     <div class="md:hidden">
                                         <div class="flex justify-between items-center mb-4">
                                             <div class="font-semibold">Judul</div>
-                                            <div>{{ slotProps.data.name }}</div>
+                                            <div class="w-[70%] break-word text-right">{{ slotProps.data.name }}</div>
                                         </div>
                                         <div class="flex justify-between items-center mb-4">
                                             <div class="font-semibold">Jumlah</div>
@@ -103,7 +105,7 @@
                         </Column>
                     </DataTable>
                 </div>
-                <div class="w-full mt-6 md:mt-0 md:pl-2">
+                <div class="w-full md:mt-0 md:pl-2" :class="selectButtonValue == 'Pemasukan' ? 'block md:block' : 'hidden md:block'">
                     <DataTable :value="pemasukan" responsiveLayout="scroll" :loading="loading" :pt="{header: {class: 'hidden md:block'}}">
                         <template #header>
                             <div class="font-semibold">Pemasukan</div>
@@ -128,7 +130,7 @@
                                     <div class="md:hidden">
                                         <div class="flex justify-between items-center mb-4">
                                             <div class="font-semibold">Judul</div>
-                                            <div>{{ slotProps.data.name }}</div>
+                                            <div class="w-[70%] break-word text-right">{{ slotProps.data.name }}</div>
                                         </div>
                                         <div class="flex justify-between items-center mb-4">
                                             <div class="font-semibold">Jumlah</div>

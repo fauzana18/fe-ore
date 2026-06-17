@@ -1,0 +1,6 @@
+{
+  "appId": "com.orenoapp.app",
+  "appName": "Ore no App",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

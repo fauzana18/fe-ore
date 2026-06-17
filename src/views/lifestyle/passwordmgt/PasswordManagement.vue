@@ -34,6 +34,7 @@ const history_data = ref([])
 const inputRef = ref()
 const loadingHistory = ref(false)
 const vaultKey = vaultKeyStore()
+const selectedData = ref({})
 
 onMounted(async () => {
     await nextTick()
@@ -158,8 +159,9 @@ const deleteData = async () => {
 }
 
 const getHistory = async (params) => {
+    selectedData.value = params
     history_data.value = []
-    historyHeader.value = `Data History ${params.webapp}`
+    historyHeader.value = `Data ${params.webapp}`
     historyDialog.value = true
 
     loadingHistory.value = true
@@ -212,15 +214,15 @@ const refresh = async () => {
                             <div class="md:hidden">
                                 <div class="flex justify-between items-center mb-4">
                                     <div class="font-semibold">Web / Aplikasi</div>
-                                    <div>{{ slotProps.data.webapp }}</div>
+                                    <div class="w-[55%] truncate text-right">{{ slotProps.data.webapp }}</div>
                                 </div>
                                 <div class="flex justify-between items-center mb-4">
                                     <div class="font-semibold">Username</div>
-                                    <div>{{ slotProps.data.username }}</div>
+                                    <div>{{ slotProps.data.username.slice(0, 5) }}...</div>
                                 </div>
                                 <div class="flex justify-between items-center mb-4">
                                     <div class="font-semibold">Password</div>
-                                    <div>{{ slotProps.data.password }}</div>
+                                    <div>{{ slotProps.data.password.slice(0, 5) }}...</div>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <div></div>
@@ -234,9 +236,17 @@ const refresh = async () => {
                         </div>
                     </template>
                 </Column>
-                <Column field="username" header="Username" class="hidden md:table-cell"></Column>
-                <Column field="password" header="Password" class="hidden md:table-cell"></Column>
-                <Column style="width:15%" class="hidden md:table-cell">
+                <Column field="username" header="Username" class="hidden md:table-cell" headerStyle="width:30%;">
+                    <template #body="slotProps">
+                        <span>{{ slotProps.data.username.slice(0, 5) }}...</span>
+                    </template>
+                </Column>
+                <Column field="password" header="Password" class="hidden md:table-cell" headerStyle="width:25%;">
+                    <template #body="slotProps">
+                        <span>{{ slotProps.data.password.slice(0, 5) }}...</span>
+                    </template>
+                </Column>
+                <Column class="hidden md:table-cell" headerStyle="width:15%;">
                     <template #body="slotProps">
                         <div>
                             <Button size="large" icon="pi pi-search" severity="info" class="mr-2" rounded @click="getHistory(slotProps.data)" />
@@ -309,11 +319,35 @@ const refresh = async () => {
         </Dialog>
         
         <Dialog v-model:visible="historyDialog" :style="{width: '450px'}" :header="historyHeader" :modal="true" class="p-fluid">
-            <div v-if="loadingHistory">Loading data...</div>
+            <div class="flex flex-col p-2 border-b border-surface-200 dark:border-surface-700">
+                <div class="flex flex-col">
+                    <label class="mb-2">Username</label>
+                    <div class="text-lg font-medium break-all mb-4">{{ selectedData.username }}</div>
+                </div>
+                <div class="flex flex-col">
+                    <label class="mb-2">Password</label>
+                    <div class="text-lg font-medium break-all mb-4">{{ selectedData.password }}</div>
+                </div>
+            </div>
+
+            <div class="font-semibold text-xl mt-4 mb-4">History Data</div>
+            <div v-if="loadingHistory">Loading history data...</div>
             <div v-if="!loadingHistory && history_data.length < 1">No history found.</div>
             <div v-for="(item, index) in history_data" :key="index">
-                <div class="flex p-2" :class="{ 'border-t border-surface-200 dark:border-surface-700': index !== 0 }">
-                    <div class="text-lg font-medium">{{item.username}} - {{ item.password }} ({{ dateHandler(item.date, false) }})</div>
+                <div class="flex flex-col p-2" :class="{ 'border-t border-surface-200 dark:border-surface-700': index !== 0 }">
+                    <!-- <div class="text-lg font-medium">{{item.username}} - {{ item.password }} ({{ dateHandler(item.date, false) }})</div> -->
+                    <div class="flex flex-col">
+                        <label class="mb-2">Username</label>
+                        <div class="text-lg font-medium break-all mb-4">{{ item.username }}</div>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="mb-2">Password</label>
+                        <div class="text-lg font-medium break-all mb-4">{{ item.password }}</div>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="mb-2">Tanggal Dibuat</label>
+                        <div class="text-lg font-medium break-all mb-4">{{ dateHandler(item.date, false) }}</div>
+                    </div>
                 </div>
             </div>
 
