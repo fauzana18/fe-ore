@@ -1,10 +1,11 @@
 <script setup>
+import router from '@/router/index';
 import { categoryStore, profileStore, saldoStore, planStore } from '@/store/finance';
 import { vaultKeyStore } from '@/store/crypto.js';
 import { useEncryptor } from '@/composables/encryptor';
 import { ref, onMounted } from 'vue';
 
-const { deriveVaultKey } = useEncryptor();
+const { deriveVaultKey } = useEncryptor()
 const loading = ref(true)
 const profiles = profileStore()
 const category = categoryStore()
@@ -13,15 +14,20 @@ const plan = planStore()
 const vaultKey = vaultKeyStore()
 
 onMounted(async () => {
-    await new Promise(resolve => setTimeout(resolve, 0))
-    const init = await Promise.all([
-        profiles.getList(),
-        category.getList(),
-        plan.getPlanNextMonth(),
-        deriveVaultKey(import.meta.env.VITE_PASSWORD, import.meta.env.VITE_SALT)
-    ])
-    vaultKey.setValue(init[3])
-    await saldo.getSaldo(profiles.list[profiles.selected].id)
+    const main_path = router.options.routes[0].children.map(route => route.path)
+    
+    if(main_path.includes(window.location.pathname) || window.location.pathname == '/') {
+        await new Promise(resolve => setTimeout(resolve, 0))
+        const init = await Promise.all([
+            profiles.getList(),
+            category.getList(),
+            plan.getPlanNextMonth(),
+            deriveVaultKey(import.meta.env.VITE_PASSWORD, import.meta.env.VITE_SALT)
+        ])
+        vaultKey.setValue(init[3])
+        await saldo.getSaldo(profiles.list[profiles.selected].id)
+    }
+    
     loading.value = false
 })
 </script>

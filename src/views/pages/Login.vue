@@ -3,17 +3,31 @@ import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
 import { useLayout } from '@/composables/layout';
+import { useEncryptor } from '@/composables/encryptor';
+import { vaultKeyStore } from '@/store/crypto.js';
 
+const { deriveVaultKey } = useEncryptor()
 const { topbarImage } = useLayout();
+const vaultKey = vaultKeyStore()
 const router = useRouter()
 const email = ref('');
 const password = ref('');
 const checked = ref(false);
 const wrong = ref(false);
+const loading = ref(false)
 
-const login = () => {
+const login = async () => {
     if(password.value == import.meta.env.VITE_PIN) {
+        loading.value = true
         localStorage.setItem("pin", password.value)
+        
+        if(!vaultKey.key) {
+            await new Promise(resolve => setTimeout(resolve, 0))
+            const key = await deriveVaultKey(import.meta.env.VITE_PASSWORD, import.meta.env.VITE_SALT)
+            vaultKey.setValue(key)
+            loading.value = false
+        }
+
         router.push({name: 'dashboard'})
     }
     else wrong.value = true
@@ -26,6 +40,12 @@ const handleEnter = (e) => {
 
 <template>
     <FloatingConfigurator />
+    <div v-if="loading" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/20 backdrop-blur-sm">
+        <!-- <div class="rounded-xl p-6 shadow-lg">
+        </div> -->
+        <div class="w-60 h-60 border-20 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
+        <span class="text-lg font-medium mt-4">Memuat data</span>
+    </div>
     <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
         <div class="flex flex-col items-center justify-center w-full">
             <div>
