@@ -237,7 +237,7 @@ export default {
 				name: this.transaction.name,
 				amount: this.transaction.amount,
 				category_id: this.transaction.category.id,
-				created: this.transaction.created,
+				created: this.transaction.id ? undefined : this.transaction.created,
 				profile_id: this.profiles.list[this.profiles.selected].id
 			}
 			

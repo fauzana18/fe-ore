@@ -25,6 +25,7 @@ const password = ref('')
 const data = ref([])
 const loading = ref(false)
 const input_data = ref({})
+const old_data = ref({})
 const toDelete = ref({})
 const modalHeader = ref('')
 const historyHeader = ref('')
@@ -56,14 +57,15 @@ const initFilters = () => {
 const checkPassword = async () => {
     if(password.value === import.meta.env.VITE_PASSWORD) {
         passwordDialog.value = false
+        key.value = vaultKey.key
 
-        if(vaultKey.key) {
-            key.value = vaultKey.key
-        } else {
-            await new Promise(resolve => setTimeout(resolve, 0))
-            key.value = await deriveVaultKey(import.meta.env.VITE_PASSWORD, import.meta.env.VITE_SALT)
-            vaultKey.setValue(key.value)
-        }
+        // if(vaultKey.key) {
+            
+        // } else {
+        //     await new Promise(resolve => setTimeout(resolve, 0))
+        //     key.value = await deriveVaultKey(import.meta.env.VITE_PASSWORD, import.meta.env.VITE_SALT)
+        //     vaultKey.setValue(key.value)
+        // }
         
         getData()
     } else {
@@ -93,6 +95,7 @@ const openInputDialog = (params) => {
     } else {
         modalHeader.value = 'Ubah Data'
         input_data.value = {...params}
+        old_data.value = {username: params.username, password: params.password}
     }
     submitStatus.value = ''
     submitted.value = false
@@ -112,7 +115,10 @@ const saveData = async () => {
         const encrypted = await encryptVaultItem({username: input_data.value.username, password: input_data.value.password}, key.value)
         const body = {webapp: input_data.value.webapp, ...encrypted}
         if(!input_data.value.id) res = await datamgtService.createVault(body)
-        else res = await datamgtService.updateVault(body, input_data.value.id)
+        else {
+            const changed = old_data.value.username != input_data.value.username || old_data.value.password != input_data.value.password
+            res = await datamgtService.updateVault({...body, changed}, input_data.value.id)
+        }
 
         if(res.status == 200) {
             submitStatus.value = 'success'
@@ -203,7 +209,7 @@ const refresh = async () => {
             <Toast/>
 
             <div class="flex w-full mt-4 mb-6 flex-col md:flex-row md:justify-between">
-                <Button size="large" label="Tambah Data Baru" icon="pi pi-plus" severity="success" class="float-right w-full md:w-auto mb-4 md:mb-0" @click="openInputDialog()"/>
+                <Button size="large" label="Tambah Data Baru" icon="pi pi-plus" severity="success" class="w-full md:w-auto mb-4 md:mb-0" @click="openInputDialog()"/>
                 <IconField class="mb-3 md:mb-0">
                     <InputIcon class="pi pi-search" />
                     <InputText size="large" placeholder="Cari Web / Aplikasi" class="w-full md:w-auto" v-model="filters['webapp'].value" />
@@ -351,7 +357,6 @@ const refresh = async () => {
             <div v-if="!loadingHistory && history_data.length < 1">No history found.</div>
             <div v-for="(item, index) in history_data" :key="index">
                 <div class="flex flex-col p-2" :class="{ 'border-t border-surface-200 dark:border-surface-700': index !== 0 }">
-                    <!-- <div class="text-lg font-medium">{{item.username}} - {{ item.password }} ({{ dateHandler(item.date, false) }})</div> -->
                     <div class="flex flex-col">
                         <label class="mb-2">Username</label>
                         <div class="text-lg font-medium break-all mb-4">{{ item.username }}</div>

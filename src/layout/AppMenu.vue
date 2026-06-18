@@ -48,6 +48,11 @@ const model = ref([
                 icon: 'pi pi-fw pi-lock',
                 to: '/lifestyle/passwordmanagement'
             },
+            {
+                label: 'Catatan',
+                icon: 'pi pi-fw pi-book',
+                to: '/lifestyle/notes'
+            },
         ]
     },
     {

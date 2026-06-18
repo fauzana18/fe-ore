@@ -38,8 +38,8 @@ function smoothScroll(id) {
                 />
             </g>
         </svg> -->
-        <img alt="Logo" :src="imageUrl" @error="handleError" width="30" />
-        <span class="text-surface-900 dark:text-surface-0 font-medium text-2xl leading-normal mr-20">Ore no App</span>
+        <img alt="Logo" :src="imageUrl" @error="handleError" width="45" />
+        <span class="text-surface-900 dark:text-surface-0 font-medium text-2xl leading-normal mr-10 w-38">Ore no App</span>
     </a>
     <Button
         class="lg:hidden!"

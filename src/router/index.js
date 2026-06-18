@@ -42,6 +42,11 @@ const router = createRouter({
                     // }
                 },
                 {
+                    path: '/lifestyle/notes',
+                    name: 'notes',
+                    component: () => import('@/views/lifestyle/notes/Notes.vue'),
+                },
+                {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('@/views/uikit/FormLayout.vue')

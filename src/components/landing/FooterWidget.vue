@@ -1,9 +1,20 @@
+<script setup>
+import { ref } from 'vue'
+import { useLayout } from '@/composables/layout';
+const { topbarImage } = useLayout();
+const imageUrl = ref(topbarImage())
+
+const handleError = () => {
+  imageUrl.value = `/${topbarImage()}`
+}
+</script>
+
 <template>
     <div class="py-6 px-6 mx-0 mt-20 lg:mx-20">
         <div class="grid grid-cols-12 gap-4">
             <div class="col-span-12 md:col-span-2">
                 <a class="flex flex-wrap items-center justify-center md:justify-start md:mb-0 mb-4 cursor-pointer">
-                    <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 mr-2">
+                    <!-- <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 mr-2">
                         <path
                             fill-rule="evenodd"
                             clip-rule="evenodd"
@@ -19,7 +30,8 @@
                                 fill="var(--primary-color)"
                             />
                         </g>
-                    </svg>
+                    </svg> -->
+                    <img alt="Logo" :src="imageUrl" @error="handleError" width="60" />
                     <h4 class="font-medium text-3xl text-surface-900 dark:text-surface-0">Ore no App</h4>
                 </a>
             </div>

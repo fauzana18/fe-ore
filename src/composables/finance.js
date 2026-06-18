@@ -6,7 +6,7 @@ export function useFinance() {
         } else return 'Rp 0'
     };
 
-    const dateHandler = (date, isMobile) => {
+    const dateHandler = (date, isMobile, getTime = false) => {
         if(isMobile) {
             const options = { year: '2-digit', month: '2-digit', day: '2-digit' }
             const d = new Date(date)
@@ -17,7 +17,7 @@ export function useFinance() {
             const dateNow = new Date()
             const dateString = d.toLocaleDateString('id-ID', options)
             const dateNowString = dateNow.toLocaleDateString('id-ID', options)
-            const res = dateNowString == dateString ? `Hari ini, ${dateString.split(', ')[1]}` : dateString
+            const res = dateNowString == dateString ? getTime ? `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` : `Hari ini, ${dateString.split(', ')[1]}` : dateString
             return res
         }
     }
