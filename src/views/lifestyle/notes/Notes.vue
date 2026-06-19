@@ -177,13 +177,13 @@ const deleteData = async () => {
 
             <Toast/>
 
-            <div v-if="loading" class="flex flex-col items-center justify-center">
+            <div v-if="loading" class="flex flex-col items-center justify-center mt-20">
                 <div class="w-60 h-60 border-20 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
                 <span class="text-lg font-medium mt-4">Memuat data</span>
             </div>
 
             <div v-else>
-                <Button size="large" icon="pi pi-plus" rounded raised severity="success" class="!fixed bottom-24 right-20 z-[4000] !w-16 !h-16 shadow-lg md:!hidden" @click="openNotes()" />
+                <Button size="large" icon="pi pi-plus" rounded raised severity="success" class="!fixed bottom-24 right-20 z-[10] !w-16 !h-16 shadow-lg md:!hidden" @click="openNotes()" />
 
                 <div class="flex w-full mt-4 mb-2 flex-col md:flex-row md:justify-between">
                     <Button size="large" label="Tambah Data Baru" icon="pi pi-plus" severity="success" class="!hidden md:!block mb-4 md:mb-0" @click="openNotes()"/>
