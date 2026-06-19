@@ -1,4 +1,10 @@
 import sodium from 'libsodium-wrappers-sumo';
+import { vaultKeyStore } from '@/store/crypto';
+
+const worker = new Worker(
+    new URL('../workers/crypto.js', import.meta.url),
+    { type: 'module' }
+);
 
 export function useEncryptor() {
     const generateSalt = async () => {
@@ -7,17 +13,20 @@ export function useEncryptor() {
         return sodium.to_base64(salt);
     }
 
-    const deriveVaultKey = async (masterPassword, saltBase64) => {
+    const deriveVaultKey = async (masterPassword, salt) => {
         await sodium.ready;
-        const salt = sodium.from_base64(saltBase64);
-        return sodium.crypto_pwhash(
-            32,
-            masterPassword,
-            salt,
-            sodium.crypto_pwhash_OPSLIMIT_MODERATE,
-            sodium.crypto_pwhash_MEMLIMIT_MODERATE,
-            sodium.crypto_pwhash_ALG_ARGON2ID13
-        );
+        return new Promise((resolve) => {
+            worker.postMessage({
+                payload: { masterPassword, salt }
+            });
+
+            worker.onmessage = (e) => {
+                const vaultKey = vaultKeyStore()
+                const key = sodium.from_base64(e.data.key)
+                vaultKey.setValue(key)
+                resolve();
+            };
+        });
     }
 
     const encryptVaultItem = async (plaintextObject, vaultKey) => {

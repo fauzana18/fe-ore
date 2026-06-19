@@ -12,6 +12,11 @@ const { checkMobileView } = useLayout();
     <div class="grid grid-cols-12 gap-8">
         <StatsWidget />
 
+        <div class="flex md:hidden col-span-12 justify-between">
+            <div class="p-2 w-full"><Button size="large" fluid label="Catatan" icon="pi pi-arrow-right" iconPos="right" severity="primary" as="router-link" to="/lifestyle/notes" /></div>
+            <!-- <div class="p-2 w-full"><Button size="large" fluid label="Catatan" icon="pi pi-arrow-right" iconPos="right" severity="primary" as="router-link" to="/lifestyle/notes" /></div> -->
+        </div>
+
         <div class="col-span-12 xl:col-span-6">
             <RecentTransactionsWidget v-if="!checkMobileView()" />
             <RecentTransactionsListWidget v-else />

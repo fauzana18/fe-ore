@@ -1,11 +1,11 @@
 <script setup>
-import { ref, onMounted, nextTick, onBeforeMount } from 'vue';
+import { ref, onMounted, nextTick, onBeforeMount, computed, watch } from 'vue';
 import { useRouter } from 'vue-router'
 import { useToast } from "primevue/usetoast";
 import { useLayout } from '@/composables/layout';
 import { useEncryptor } from '@/composables/encryptor';
 import { useFinance } from '@/composables/finance';
-import { vaultKeyStore } from '@/store/crypto.js'
+import { vaultKeyStore } from '@/store/crypto'
 import DatamgtService from '@/service/DatamgtService';
 import { FilterMatchMode } from '@primevue/core/api';
 
@@ -13,8 +13,7 @@ const filters = ref(null);
 const datamgtService = new DatamgtService()
 const { topbarImage } = useLayout();
 const { dateHandler } = useFinance();
-const { deriveVaultKey, encryptVaultItem, decryptVaultItem } = useEncryptor();
-const key = ref(null)
+const { encryptVaultItem, decryptVaultItem } = useEncryptor();
 const toast = useToast();
 const router = useRouter()
 const passwordDialog = ref(true)
@@ -39,6 +38,14 @@ const loadingHistory = ref(false)
 const vaultKey = vaultKeyStore()
 const selectedData = ref({})
 
+const key = computed(() => {
+  return vaultKey.key
+})
+
+watch(key, async () => {
+    if(!passwordDialog.value) await getData()
+});
+
 onMounted(async () => {
     await nextTick()
     inputRef.value.$el.focus()
@@ -57,17 +64,9 @@ const initFilters = () => {
 const checkPassword = async () => {
     if(password.value === import.meta.env.VITE_PASSWORD) {
         passwordDialog.value = false
-        key.value = vaultKey.key
-
-        // if(vaultKey.key) {
-            
-        // } else {
-        //     await new Promise(resolve => setTimeout(resolve, 0))
-        //     key.value = await deriveVaultKey(import.meta.env.VITE_PASSWORD, import.meta.env.VITE_SALT)
-        //     vaultKey.setValue(key.value)
-        // }
         
-        getData()
+        if(key.value) await getData()
+        else loading.value = true
     } else {
         router.push({name: 'dashboard'})
     }
@@ -299,8 +298,8 @@ const refresh = async () => {
                         <InputText v-model="password" id="password" ref="inputRef" class="!bg-white/20 !border-0 !p-4 !text-primary-50 w-80" type="password" @keypress.enter="checkPassword"></InputText>
                     </div>
                     <div class="flex items-center gap-4">
-                        <Button label="Ok" variant="text" class="!p-4 w-full !text-primary-50 !border !border-white/30 hover:!bg-white/10" @click="checkPassword"></Button>
                         <Button label="Cancel" variant="text" class="!p-4 w-full !text-primary-50 !border !border-white/30 hover:!bg-white/10" @click="$router.push({ name: 'dashboard' })"></Button>
+                        <Button label="Ok" variant="text" class="!p-4 w-full !text-primary-50 !border !border-white/30 hover:!bg-white/10" @click="checkPassword"></Button>
                     </div>
                 </div>
             </template>
