@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { useToast } from "primevue/usetoast"
 import { useEncryptor } from '@/composables/encryptor'
 import { useFinance } from '@/composables/finance'
@@ -20,6 +20,7 @@ const note = ref(null)
 const search = ref('')
 const changed = ref(false)
 const readmode = ref(false)
+const dialogRef = ref()
 const contextMenu = ref(null);
 const contextMenuItems = ref([
     {label: 'Read Mode', icon: 'pi pi-book'},
@@ -63,11 +64,14 @@ const getNotes = async () => {
     })
 }
 
-const openNotes = (params) => {
+const openNotes = async (params) => {
     changed.value = false
     if(params) note.value = params
     else note.value = {title: '', note: '', date: new Date()}
     noteDialog.value = true
+    await nextTick()
+    dialogRef.value.maximizableButton.style = 'display: none;'
+    dialogRef.value.maximized = readmode.value
 }
 
 const save = async () => {
@@ -221,7 +225,7 @@ const deleteData = async () => {
             </div>
         </div>
 
-        <Dialog v-model:visible="noteDialog" modal pt:content:class="!h-full" :style="{ width: '100%', height: '100%' }" @hide="save">
+        <Dialog v-model:visible="noteDialog" modal pt:content:class="!h-full" :style="{ width: '100%', height: '100%' }" @hide="save" maximizable ref="dialogRef">
             <template #header>
                 <div class="flex flex-col w-full">
                     <InputText size="large" fluid type="text" v-model="note.title" placeholder="Judul" class="!bg-inherit !border-0 disabled:!text-[var(--p-inputtext-color)]" @input="onchange" :disabled="readmode" />
