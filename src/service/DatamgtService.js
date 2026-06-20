@@ -36,4 +36,12 @@ export default class workoutService {
     deleteNotes(id) {
         return axios.delete(`${import.meta.env.VITE_BASE_URL}/data/notes/${id}`)
     }
+
+    getTaskList(user_id) {
+        return axios.get(`${import.meta.env.VITE_BASE_URL}/data/tasklist/${user_id}`)
+    }
+
+    saveTaskList(body) {
+        return axios.post(`${import.meta.env.VITE_BASE_URL}/data/tasklist`, body)
+    }
 }

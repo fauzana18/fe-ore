@@ -8,7 +8,9 @@
         "lint": "eslint --fix . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
     },
     "dependencies": {
+        "@capacitor/app": "^8.1.0",
         "@primeuix/themes": "^2.0.0",
+        "@vueuse/core": "^14.3.0",
         "axios": "^1.16.1",
         "chart.js": "3.3.2",
         "libsodium-wrappers-sumo": "^0.8.4",

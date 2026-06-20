@@ -53,24 +53,21 @@ const model = ref([
                 icon: 'pi pi-fw pi-book',
                 to: '/lifestyle/notes'
             },
+            {
+                label: 'Daftar Tugas',
+                icon: 'pi pi-fw pi-list-check',
+                to: '/lifestyle/tasklist'
+            },
         ]
     },
-    
-    
     {
-        label: 'Pages',
-        icon: 'pi pi-fw pi-briefcase',
-        path: '/pages',
+        label: 'Admin',
         items: [
             {
-                label: 'Landing',
-                icon: 'pi pi-fw pi-globe',
-                to: '/landing'
-            },
-            {
-                label: 'Empty',
-                icon: 'pi pi-fw pi-circle-off',
-                to: '/pages/empty'
+                label: 'CPanel',
+                icon: 'pi pi-fw pi-server',
+                url: 'https://kindy.id.domainesia.com:2083/',
+                target: '_blank'
             }
         ]
     }

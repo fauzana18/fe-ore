@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted, computed, watch, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
+import { App } from '@capacitor/app'
 import { useToast } from "primevue/usetoast"
 import { useEncryptor } from '@/composables/encryptor'
 import { useFinance } from '@/composables/finance'
@@ -43,12 +44,27 @@ const filteredNotes = computed(() => {
   )
 })
 
+let backHandler
 onMounted(async () => {
     loading.value = true
+    backHandler = await App.addListener('backButton', ({ canGoBack }) => {
+        if(noteDialog.value) {
+            noteDialog.value = false
+            return
+        }
+
+        if (canGoBack) {
+            window.history.back()
+        }
+    })
     if(key.value) {
         await getNotes()
         loading.value = false
     }
+})
+
+onUnmounted(() => {
+    backHandler?.remove()
 })
 
 const getNotes = async () => {
@@ -174,6 +190,14 @@ const deleteData = async () => {
 }
 </script>
 
+<style scoped lang="scss">
+.data-view-item {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+</style>
+
 <template>
     <div class="flex flex-col">
         <div class="card">
@@ -209,7 +233,7 @@ const deleteData = async () => {
                     <template #grid="slotProps">
                         <div class="grid grid-cols-12">
                             <div v-for="(item) in slotProps.items" :key="item.id" class="col-span-6 sm:col-span-4 md:col-span-3 lg:col-span-2 p-1 md:p-2">
-                                <div class="p-4 border border-surface-200 dark:border-surface-700 bg-surface-200 dark:bg-surface-800 rounded flex flex-col h-60 rounded-lg cursor-pointer"
+                                <div class="p-4 border border-surface-200 dark:border-surface-700 bg-surface-200 dark:bg-surface-800 rounded flex flex-col h-60 rounded-lg cursor-pointer data-view-item"
                                     @click="openNotes(item)" @contextmenu.prevent="showDesktopContextMenu($event, item)" v-touch:hold="(event) => showMobileContextMenu(event, item)">
                                     <div class="flex flex-col items-start h-full">
                                         <div class="text-lg font-medium truncate w-full pb-4">{{ item.title }}</div>

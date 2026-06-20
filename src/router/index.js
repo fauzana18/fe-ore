@@ -47,6 +47,11 @@ const router = createRouter({
                     component: () => import('@/views/lifestyle/notes/Notes.vue'),
                 },
                 {
+                    path: '/lifestyle/tasklist',
+                    name: 'tasklist',
+                    component: () => import('@/views/lifestyle/tasklist/TaskList.vue'),
+                },
+                {
                     path: '/pages/empty',
                     name: 'empty',
                     component: () => import('@/views/pages/Empty.vue')
